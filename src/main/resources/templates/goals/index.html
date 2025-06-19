@@ -438,20 +438,20 @@
             <!-- 统计信息 -->
             <div class="stats-grid" th:if="${statistics}">
                 <div class="stat-card">
-                    <div class="stat-number" th:text="${statistics.totalGoals}">0</div>
+                    <div class="stat-number" th:text="${statistics.totalCount}">0</div>
                     <div class="stat-label">总目标数</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" th:text="${statistics.activeGoals}">0</div>
+                    <div class="stat-number" th:text="${statistics.activeCount}">0</div>
                     <div class="stat-label">活跃目标</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" th:text="${statistics.completedGoals}">0</div>
+                    <div class="stat-number" th:text="${statistics.completedCount}">0</div>
                     <div class="stat-label">已完成</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" th:text="${statistics.averageProgress + '%'}">0%</div>
-                    <div class="stat-label">平均进度</div>
+                    <div class="stat-number" th:text="${statistics.pausedCount}">0</div>
+                    <div class="stat-label">暂停目标</div>
                 </div>
             </div>
 
@@ -477,10 +477,10 @@
                         <div class="goal-progress">
                             <div class="progress-label">
                                 <span>进度</span>
-                                <span th:text="${goal.progressPercentage + '%'}">0%</span>
+                                <span th:text="${goal.progress + '%'}">0%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" th:style="'width: ' + ${goal.progressPercentage} + '%'"></div>
+                                <div class="progress-fill" th:style="'width: ' + ${goal.progress} + '%'"></div>
                             </div>
                         </div>
                         <div class="goal-date" th:if="${goal.targetDate}" th:text="'目标日期: ' + ${#temporals.format(goal.targetDate, 'yyyy-MM-dd')}">
@@ -503,10 +503,10 @@
                         <div class="goal-progress">
                             <div class="progress-label">
                                 <span>进度</span>
-                                <span th:text="${goal.progressPercentage + '%'}">0%</span>
+                                <span th:text="${goal.progress + '%'}">0%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" th:style="'width: ' + ${goal.progressPercentage} + '%'"></div>
+                                <div class="progress-fill" th:style="'width: ' + ${goal.progress} + '%'"></div>
                             </div>
                         </div>
                         <div class="goal-date" th:if="${goal.targetDate}" th:text="'目标日期: ' + ${#temporals.format(goal.targetDate, 'yyyy-MM-dd')}">
@@ -529,10 +529,10 @@
                         <div class="goal-progress">
                             <div class="progress-label">
                                 <span>进度</span>
-                                <span th:text="${goal.progressPercentage + '%'}">0%</span>
+                                <span th:text="${goal.progress + '%'}">0%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" th:style="'width: ' + ${goal.progressPercentage} + '%'"></div>
+                                <div class="progress-fill" th:style="'width: ' + ${goal.progress} + '%'"></div>
                             </div>
                         </div>
                         <div class="goal-date" th:if="${goal.targetDate}" th:text="'目标日期: ' + ${#temporals.format(goal.targetDate, 'yyyy-MM-dd')}">
