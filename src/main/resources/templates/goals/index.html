@@ -557,7 +557,7 @@
                 <h2 class="modal-title">创建新目标</h2>
                 <span class="close" onclick="closeCreateModal()">&times;</span>
             </div>
-            <form action="/goals/create" method="post">
+            <form th:action="@{/goals/create}" method="post">
                 <div class="form-group">
                     <label class="form-label" for="goalDescription">目标描述</label>
                     <input type="text" id="goalDescription" name="goalDescription" class="form-control" 
