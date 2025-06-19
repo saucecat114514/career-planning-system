@@ -415,7 +415,13 @@
                 <li><a href="/courses">技能提升</a></li>
                 <li><a href="/goals" class="active">目标管理</a></li>
                 <li><a href="/industry-insights">行业洞察</a></li>
-                <li><a href="/logout">退出</a></li>
+                <li>
+                    <form th:action="@{/logout}" method="post" style="display: inline;">
+                        <button type="submit" style="background: none; border: none; color: rgba(255, 255, 255, 0.9); cursor: pointer; padding: 0.5rem 1rem; border-radius: 20px; transition: all 0.3s ease;">
+                            退出
+                        </button>
+                    </form>
+                </li>
             </ul>
         </div>
     </nav>

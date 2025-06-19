@@ -308,9 +308,11 @@
                     <div class="user-profile">
                         <i class="fas fa-user-circle"></i>
                         <span sec:authentication="name">用户</span>
-                        <a href="/logout" style="color: rgba(255,255,255,0.8); margin-left: 0.5rem;">
-                            <i class="fas fa-sign-out-alt"></i>
-                        </a>
+                        <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 0.5rem;">
+                            <button type="submit" style="background: none; border: none; color: rgba(255,255,255,0.8); cursor: pointer; padding: 0;">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </button>
+                        </form>
                     </div>
                 </li>
             </ul>
