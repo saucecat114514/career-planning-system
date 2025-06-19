@@ -48,7 +48,7 @@ public class SecurityConfig {
                 .ignoringRequestMatchers("/h2-console/**") // 如果需要使用H2控制台
             )
             .headers(headers -> headers
-                .frameOptions().sameOrigin() // 允许同源iframe，用于H2控制台
+                .frameOptions(frameOptions -> frameOptions.sameOrigin()) // 允许同源iframe，用于H2控制台
             );
 
         return http.build();

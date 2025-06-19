@@ -109,6 +109,23 @@
             gap: 0.5rem;
         }
 
+        .user-profile button {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.8);
+            cursor: pointer;
+            padding: 0.2rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .user-profile button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: scale(1.1);
+        }
+
         /* 主要内容区域 */
         .main-content {
             margin-top: 100px;
@@ -352,18 +369,22 @@
                 CareerFlow
             </a>
             <ul class="nav-links">
-                <li><a href="#" onclick="searchFeatures()">搜索课程/技能/趋势</a></li>
+                <li><a href="/dashboard">个人中心</a></li>
+                <li><a href="/assessment">职业测评</a></li>
+                <li><a href="/courses">技能提升</a></li>
+                <li><a href="/goals">目标管理</a></li>
                 <li><a href="/career-planning" class="active">职业规划</a></li>
-                <li><a href="/skills-development">技能提升</a></li>
-                <li><a href="/industry-insights">行业洞察</a></li>
-                <li sec:authorize="isAuthenticated()">
+                <li><a href="/industry">行业洞察</a></li>
+                <li>
                     <div class="user-profile">
                         <i class="fas fa-user-circle"></i>
                         <span sec:authentication="name">用户</span>
+                        <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 0.5rem;">
+                            <button type="submit" style="background: none; border: none; color: rgba(255,255,255,0.8); cursor: pointer; padding: 0;">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </button>
+                        </form>
                     </div>
-                </li>
-                <li sec:authorize="!isAuthenticated()">
-                    <a href="/login" class="login-btn">登录</a>
                 </li>
             </ul>
         </div>

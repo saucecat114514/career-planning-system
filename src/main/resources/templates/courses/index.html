@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>技能提升课程 - CareerFlow</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -19,119 +20,136 @@
             position: relative;
         }
 
-        /* 动态背景装饰 */
-        .bg-decoration {
+        /* 背景装饰 */
+        body::before {
+            content: '';
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 40%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(255,255,255,0.06) 0%, transparent 50%);
             pointer-events: none;
             z-index: 0;
-        }
-
-        .floating-element {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            backdrop-filter: blur(10px);
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .floating-element:nth-child(1) {
-            width: 100px;
-            height: 100px;
-            top: 10%;
-            left: 15%;
-            animation-delay: 0s;
-        }
-
-        .floating-element:nth-child(2) {
-            width: 80px;
-            height: 80px;
-            top: 70%;
-            right: 20%;
-            animation-delay: 3s;
-        }
-
-        .floating-element:nth-child(3) {
-            width: 60px;
-            height: 60px;
-            bottom: 30%;
-            left: 25%;
-            animation-delay: 1.5s;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(180deg); }
-        }
-
-        /* 主容器 */
-        .container {
-            position: relative;
-            z-index: 1;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-            min-height: 100vh;
         }
 
         /* 导航栏 */
         .navbar {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            padding: 1rem 2rem;
-            margin-bottom: 2rem;
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 0 2rem;
         }
 
         .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
+            font-size: 1.8rem;
+            font-weight: 700;
             color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .nav-links {
             display: flex;
+            list-style: none;
             gap: 2rem;
+            align-items: center;
         }
 
         .nav-links a {
-            color: white;
+            color: rgba(255, 255, 255, 0.9);
             text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 10px;
+            font-weight: 500;
             transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
         }
 
-        .nav-links a:hover {
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .user-profile {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            padding: 0.5rem 1rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-profile button {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.8);
+            cursor: pointer;
+            padding: 0.2rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .user-profile button:hover {
             background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
+            color: white;
+            transform: scale(1.1);
         }
 
-        /* 主标题区域 */
-        .hero-section {
+        /* 主要内容区域 */
+        .main-content {
+            margin-top: 100px;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 页面标题区域 */
+        .page-header {
             text-align: center;
             margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
             color: white;
-        }
-
-        .hero-section h1 {
-            font-size: 3rem;
             margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .hero-section p {
+        .page-subtitle {
             font-size: 1.2rem;
-            opacity: 0.9;
+            color: rgba(255, 255, 255, 0.8);
             max-width: 600px;
-            margin: 0 auto 2rem;
+            margin: 0 auto;
         }
 
         /* 搜索和筛选区域 */
@@ -265,34 +283,12 @@
             margin-bottom: 1.5rem;
         }
 
-        .course-rating {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #ffd700;
-        }
-
         .course-duration {
             color: rgba(255, 255, 255, 0.7);
             font-size: 0.9rem;
         }
 
-        .course-stats {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.9rem;
-        }
-
-        .course-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .course-tag {
+        .course-difficulty {
             background: rgba(79, 172, 254, 0.3);
             color: white;
             padding: 0.3rem 0.8rem;
@@ -300,71 +296,100 @@
             font-size: 0.8rem;
         }
 
-        .course-action {
+        .course-progress {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 6px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .course-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-continue {
+            flex: 1;
             background: linear-gradient(45deg, #4facfe, #00f2fe);
             color: white;
             border: none;
-            padding: 0.8rem 2rem;
-            border-radius: 25px;
+            padding: 0.8rem 1.5rem;
+            border-radius: 15px;
             cursor: pointer;
             font-weight: bold;
             transition: all 0.3s ease;
-            width: 100%;
         }
 
-        .course-action:hover {
+        .btn-continue:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
         }
 
-        /* 统计信息 */
-        .stats-section {
+        .btn-start {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.8rem 1.5rem;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-start:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* 加载更多按钮 */
+        .load-more-section {
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .load-more-btn {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-        }
-
-        .stat-item {
-            text-align: center;
             color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 3rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
         }
 
-        .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            opacity: 0.8;
+        .load-more-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
         }
 
         /* 响应式设计 */
         @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
+            .nav-container {
+                padding: 0 1rem;
             }
-
-            .navbar {
-                flex-direction: column;
+            
+            .nav-links {
                 gap: 1rem;
             }
 
-            .hero-section h1 {
-                font-size: 2rem;
+            .main-content {
+                padding: 1rem;
             }
 
-            .courses-grid {
-                grid-template-columns: 1fr;
+            .page-title {
+                font-size: 2rem;
             }
 
             .search-box {
@@ -374,211 +399,306 @@
             .filter-tabs {
                 justify-content: center;
             }
-        }
 
-        /* 加载动画 */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+            .courses-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- 动态背景装饰 -->
-    <div class="bg-decoration">
-        <div class="floating-element"></div>
-        <div class="floating-element"></div>
-        <div class="floating-element"></div>
-    </div>
-
-    <div class="container">
-        <!-- 导航栏 -->
-        <nav class="navbar">
-            <div class="logo">🎯 CareerFlow</div>
-            <div class="nav-links">
-                <a href="/dashboard">个人中心</a>
-                <a href="/assessment">职业测评</a>
-                <a href="/career-planning">职业规划</a>
-                <a href="/goals">目标管理</a>
-                <a href="/industry">行业洞察</a>
-            </div>
-        </nav>
-
-        <!-- 主标题区域 -->
-        <section class="hero-section">
-            <h1>📚 技能提升课程</h1>
-            <p>精选优质课程，助您提升职业技能，实现职业目标</p>
-        </section>
-
-        <!-- 搜索和筛选区域 -->
-        <section class="filter-section">
-            <div class="search-box">
-                <input type="text" class="search-input" placeholder="搜索课程名称、技能或关键词..." id="searchInput">
-                <button class="search-btn" onclick="searchCourses()">🔍 搜索</button>
-            </div>
-            <div class="filter-tabs">
-                <button class="filter-tab active" onclick="filterByCategory('all')">全部课程</button>
-                <button class="filter-tab" onclick="filterByCategory('编程开发')">编程开发</button>
-                <button class="filter-tab" onclick="filterByCategory('数据分析')">数据分析</button>
-                <button class="filter-tab" onclick="filterByCategory('设计创意')">设计创意</button>
-                <button class="filter-tab" onclick="filterByCategory('产品管理')">产品管理</button>
-                <button class="filter-tab" onclick="filterByCategory('项目管理')">项目管理</button>
-                <button class="filter-tab" onclick="filterByCategory('综合技能')">综合技能</button>
-            </div>
-        </section>
-
-        <!-- 统计信息 -->
-        <section class="stats-section">
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-number" th:text="${#lists.size(courses)}">156</div>
-                    <div class="stat-label">精品课程</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number" th:text="${#lists.size(categories)}">8</div>
-                    <div class="stat-label">专业领域</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">98%</div>
-                    <div class="stat-label">学员满意度</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">24/7</div>
-                    <div class="stat-label">在线学习</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 课程网格 -->
-        <section class="courses-grid" id="coursesGrid">
-            <div th:each="course : ${courses}" class="course-card" th:data-category="${course.category}">
-                <div class="course-category" th:text="${course.category}">编程开发</div>
-                
-                <h3 class="course-title" th:text="${course.title}">Java Spring Boot 实战</h3>
-                
-                <p class="course-description" th:text="${course.description}">
-                    全面学习Spring Boot框架，掌握企业级Java开发技能...
-                </p>
-                
-                <div class="course-meta">
-                    <div class="course-rating">
-                        <span>⭐</span>
-                        <span th:text="${course.rating}">4.8</span>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <span>📚</span> CareerFlow
+            </a>
+            <ul class="nav-links">
+                <li><a href="/dashboard">个人中心</a></li>
+                <li><a href="/assessment">职业测评</a></li>
+                <li><a href="/courses" class="active">技能提升</a></li>
+                <li><a href="/goals">目标管理</a></li>
+                <li><a href="/career-planning">职业规划</a></li>
+                <li><a href="/industry">行业洞察</a></li>
+                <li>
+                    <div class="user-profile">
+                        <i class="fas fa-user-circle"></i>
+                        <span sec:authentication="name">用户</span>
+                        <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 0.5rem;">
+                            <button type="submit" style="background: none; border: none; color: rgba(255,255,255,0.8); cursor: pointer; padding: 0;">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </button>
+                        </form>
                     </div>
-                    <div class="course-duration" th:text="${course.duration} + '小时'">40小时</div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main class="main-content">
+        <div class="container">
+            <!-- 页面标题 -->
+            <header class="page-header">
+                <h1 class="page-title">技能提升课程</h1>
+                <p class="page-subtitle">
+                    提升技能，拓展能力边界，为职业发展注入新动力
+                </p>
+            </header>
+
+            <!-- 搜索和筛选区域 -->
+            <section class="filter-section">
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="搜索课程名称、技能或关键词..." id="searchInput">
+                    <button class="search-btn" onclick="searchCourses()">🔍 搜索</button>
                 </div>
                 
-                <div class="course-stats">
-                    <span>难度：<span th:text="${course.difficulty}">中级</span></span>
-                    <span>学员：<span th:text="${course.enrollmentCount}">1250</span>人</span>
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-category="all">全部课程</button>
+                    <button class="filter-tab" data-category="programming">编程开发</button>
+                    <button class="filter-tab" data-category="design">设计创意</button>
+                    <button class="filter-tab" data-category="marketing">市场营销</button>
+                    <button class="filter-tab" data-category="management">管理领导</button>
+                    <button class="filter-tab" data-category="finance">金融财务</button>
+                    <button class="filter-tab" data-category="data">数据分析</button>
                 </div>
-                
-                <div class="course-tags" th:if="${course.tags}">
-                    <span th:each="tag : ${#strings.listSplit(course.tags, ',')}" 
-                          class="course-tag" th:text="${tag}">Java</span>
-                </div>
-                
-                <button class="course-action" th:onclick="'enrollCourse(' + ${course.id} + ')'">
-                    立即学习
+            </section>
+
+            <!-- 课程网格 -->
+            <section class="courses-grid" id="coursesGrid">
+                <!-- 课程卡片将通过JavaScript动态生成 -->
+            </section>
+
+            <!-- 加载更多 -->
+            <div class="load-more-section">
+                <button class="load-more-btn" onclick="loadMoreCourses()">
+                    加载更多课程
                 </button>
             </div>
-        </section>
-
-        <!-- 推荐课程区域 -->
-        <section class="stats-section" th:if="${recommendedCourses != null and !#lists.isEmpty(recommendedCourses)}">
-            <h3 style="color: white; margin-bottom: 2rem; text-align: center;">
-                🎯 为您推荐的课程
-            </h3>
-            <div class="courses-grid">
-                <div th:each="course : ${recommendedCourses}" class="course-card">
-                    <div class="course-category" th:text="${course.category}">推荐</div>
-                    <h3 class="course-title" th:text="${course.title}">推荐课程</h3>
-                    <p class="course-description" th:text="${course.description}">课程描述</p>
-                    <div class="course-meta">
-                        <div class="course-rating">
-                            <span>⭐</span>
-                            <span th:text="${course.rating}">4.8</span>
-                        </div>
-                        <div class="course-duration" th:text="${course.duration} + '小时'">40小时</div>
-                    </div>
-                    <button class="course-action" th:onclick="'enrollCourse(' + ${course.id} + ')'">
-                        立即学习
-                    </button>
-                </div>
-            </div>
-        </section>
-    </div>
+        </div>
+    </main>
 
     <script>
-        function filterByCategory(category) {
-            // 更新活跃标签
-            document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
-            event.target.classList.add('active');
+        // 模拟课程数据
+        const allCourses = [
+            {
+                id: 1,
+                title: "Java Spring Boot 全栈开发",
+                description: "从零基础到企业级应用开发，掌握现代Java开发技术栈，包括Spring Boot、Spring Security、JPA等核心技术。",
+                category: "programming",
+                duration: "40小时",
+                difficulty: "中级",
+                progress: 65,
+                enrolled: true
+            },
+            {
+                id: 2,
+                title: "UI/UX 设计思维与实践",
+                description: "学习用户体验设计的核心思维，掌握设计工具的使用，从用户研究到产品原型的完整设计流程。",
+                category: "design",
+                duration: "25小时",
+                difficulty: "初级",
+                progress: 0,
+                enrolled: false
+            },
+            {
+                id: 3,
+                title: "Python 数据分析与可视化",
+                description: "使用Python进行数据处理、分析和可视化，掌握Pandas、NumPy、Matplotlib等数据科学工具。",
+                category: "data",
+                duration: "35小时",
+                difficulty: "中级",
+                progress: 30,
+                enrolled: true
+            },
+            {
+                id: 4,
+                title: "数字营销策略与实施",
+                description: "全面了解数字营销生态，学习SEO、SEM、社交媒体营销、内容营销等现代营销方法。",
+                category: "marketing",
+                duration: "28小时",
+                difficulty: "初级",
+                progress: 0,
+                enrolled: false
+            },
+            {
+                id: 5,
+                title: "项目管理 PMP 认证课程",
+                description: "系统学习项目管理知识体系，掌握项目管理五大过程组和十大知识领域，备考PMP认证。",
+                category: "management",
+                duration: "60小时",
+                difficulty: "高级",
+                progress: 15,
+                enrolled: true
+            },
+            {
+                id: 6,
+                title: "财务分析与投资决策",
+                description: "学习财务报表分析、投资评估方法、风险管理等企业财务管理核心技能。",
+                category: "finance",
+                duration: "32小时",
+                difficulty: "中级",
+                progress: 0,
+                enrolled: false
+            },
+            {
+                id: 7,
+                title: "React 前端开发进阶",
+                description: "深入学习React生态系统，包括Redux状态管理、React Router、Hooks等现代前端开发技术。",
+                category: "programming",
+                duration: "45小时",
+                difficulty: "高级",
+                progress: 80,
+                enrolled: true
+            },
+            {
+                id: 8,
+                title: "品牌设计与视觉识别",
+                description: "学习品牌设计的核心原理，掌握Logo设计、VI系统设计、品牌应用等视觉设计技能。",
+                category: "design",
+                duration: "30小时",
+                difficulty: "中级",
+                progress: 0,
+                enrolled: false
+            }
+        ];
+
+        let currentFilter = 'all';
+        let displayedCourses = 6;
+
+        // 页面加载时渲染课程
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCourses();
+            initializeFilters();
+        });
+
+        // 渲染课程卡片
+        function renderCourses(courses = null) {
+            const coursesToRender = courses || getFilteredCourses();
+            const grid = document.getElementById('coursesGrid');
             
-            // 筛选课程
-            const courseCards = document.querySelectorAll('.course-card');
-            courseCards.forEach(card => {
-                if (category === 'all' || card.dataset.category === category) {
-                    card.style.display = 'block';
-                    card.style.animation = 'slideIn 0.5s ease';
-                } else {
-                    card.style.display = 'none';
-                }
+            grid.innerHTML = coursesToRender.slice(0, displayedCourses).map(course => {
+                const categoryColor = getCategoryColor(course.category);
+                const difficultyColor = getDifficultyColor(course.difficulty);
+                
+                return `
+                    <div class="course-card" data-category="${course.category}">
+                        <div class="course-category" style="background: ${categoryColor}">
+                            ${getCategoryName(course.category)}
+                        </div>
+                        <h3 class="course-title">${course.title}</h3>
+                        <p class="course-description">${course.description}</p>
+                        <div class="course-meta">
+                            <span class="course-duration">⏱️ ${course.duration}</span>
+                            <span class="course-difficulty" style="background: ${difficultyColor}">
+                                ${course.difficulty}
+                            </span>
+                        </div>
+                        ${course.enrolled ? `
+                            <div class="course-progress">
+                                <div class="progress-fill" style="width: ${course.progress}%"></div>
+                            </div>
+                            <div class="course-actions">
+                                <button class="btn-continue">继续学习 (${course.progress}%)</button>
+                            </div>
+                        ` : `
+                            <div class="course-actions">
+                                <button class="btn-start">开始学习</button>
+                            </div>
+                        `}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 获取筛选后的课程
+        function getFilteredCourses() {
+            if (currentFilter === 'all') {
+                return allCourses;
+            }
+            return allCourses.filter(course => course.category === currentFilter);
+        }
+
+        // 初始化筛选器
+        function initializeFilters() {
+            const tabs = document.querySelectorAll('.filter-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // 移除所有active类
+                    tabs.forEach(t => t.classList.remove('active'));
+                    // 添加active类到当前标签
+                    this.classList.add('active');
+                    
+                    currentFilter = this.dataset.category;
+                    displayedCourses = 6; // 重置显示数量
+                    renderCourses();
+                });
             });
         }
 
+        // 搜索课程
         function searchCourses() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const courseCards = document.querySelectorAll('.course-card');
+            if (searchTerm.trim() === '') {
+                renderCourses();
+                return;
+            }
             
-            courseCards.forEach(card => {
-                const title = card.querySelector('.course-title').textContent.toLowerCase();
-                const description = card.querySelector('.course-description').textContent.toLowerCase();
-                const tags = card.querySelector('.course-tags')?.textContent.toLowerCase() || '';
-                
-                if (title.includes(searchTerm) || description.includes(searchTerm) || tags.includes(searchTerm)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+            const filteredCourses = allCourses.filter(course => 
+                course.title.toLowerCase().includes(searchTerm) ||
+                course.description.toLowerCase().includes(searchTerm) ||
+                getCategoryName(course.category).toLowerCase().includes(searchTerm)
+            );
+            
+            renderCourses(filteredCourses);
         }
 
-        function enrollCourse(courseId) {
-            // 这里可以添加课程报名逻辑
-            alert('正在跳转到课程详情页面...');
-            // window.location.href = '/courses/' + courseId;
+        // 加载更多课程
+        function loadMoreCourses() {
+            displayedCourses += 6;
+            renderCourses();
         }
 
-        // 回车搜索
+        // 搜索框回车事件
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 searchCourses();
             }
         });
 
-        // 页面加载动画
-        document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.course-card');
-            cards.forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(30px)';
-                setTimeout(() => {
-                    card.style.transition = 'all 0.6s ease';
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, index * 100);
-            });
-        });
+        // 辅助函数
+        function getCategoryName(category) {
+            const names = {
+                programming: '编程开发',
+                design: '设计创意',
+                marketing: '市场营销',
+                management: '管理领导',
+                finance: '金融财务',
+                data: '数据分析'
+            };
+            return names[category] || category;
+        }
+
+        function getCategoryColor(category) {
+            const colors = {
+                programming: 'linear-gradient(45deg, #667eea, #764ba2)',
+                design: 'linear-gradient(45deg, #f093fb, #f5576c)',
+                marketing: 'linear-gradient(45deg, #4facfe, #00f2fe)',
+                management: 'linear-gradient(45deg, #43e97b, #38f9d7)',
+                finance: 'linear-gradient(45deg, #fa709a, #fee140)',
+                data: 'linear-gradient(45deg, #a8edea, #fed6e3)'
+            };
+            return colors[category] || 'linear-gradient(45deg, #ff6b6b, #ee5a24)';
+        }
+
+        function getDifficultyColor(difficulty) {
+            const colors = {
+                '初级': 'rgba(67, 233, 123, 0.3)',
+                '中级': 'rgba(79, 172, 254, 0.3)',
+                '高级': 'rgba(250, 112, 154, 0.3)'
+            };
+            return colors[difficulty] || 'rgba(255, 255, 255, 0.2)';
+        }
     </script>
 </body>
 </html> 

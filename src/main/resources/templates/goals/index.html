@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>目标管理 - CareerFlow</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -56,30 +57,64 @@
         }
 
         .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
+            font-size: 1.8rem;
+            font-weight: 700;
             color: white;
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .nav-links {
             display: flex;
             list-style: none;
             gap: 2rem;
+            align-items: center;
         }
 
         .nav-links a {
-            color: white;
+            color: rgba(255, 255, 255, 0.9);
             text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 25px;
+            font-weight: 500;
             transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
         }
 
         .nav-links a:hover,
         .nav-links a.active {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .user-profile {
+            background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            padding: 0.5rem 1rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-profile button {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.8);
+            cursor: pointer;
+            padding: 0.2rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .user-profile button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: scale(1.1);
         }
 
         /* 主要内容 */
@@ -411,16 +446,21 @@
             <a href="/" class="logo">CareerFlow</a>
             <ul class="nav-links">
                 <li><a href="/dashboard">个人中心</a></li>
-                <li><a href="/career-planning">职业规划</a></li>
+                <li><a href="/assessment">职业测评</a></li>
                 <li><a href="/courses">技能提升</a></li>
                 <li><a href="/goals" class="active">目标管理</a></li>
-                <li><a href="/industry-insights">行业洞察</a></li>
+                <li><a href="/career-planning">职业规划</a></li>
+                <li><a href="/industry">行业洞察</a></li>
                 <li>
-                    <form th:action="@{/logout}" method="post" style="display: inline;">
-                        <button type="submit" style="background: none; border: none; color: rgba(255, 255, 255, 0.9); cursor: pointer; padding: 0.5rem 1rem; border-radius: 20px; transition: all 0.3s ease;">
-                            退出
-                        </button>
-                    </form>
+                    <div class="user-profile">
+                        <i class="fas fa-user-circle"></i>
+                        <span sec:authentication="name">用户</span>
+                        <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 0.5rem;">
+                            <button type="submit" style="background: none; border: none; color: rgba(255,255,255,0.8); cursor: pointer; padding: 0;">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </button>
+                        </form>
+                    </div>
                 </li>
             </ul>
         </div>

@@ -103,6 +103,23 @@
             gap: 0.5rem;
         }
 
+        .user-profile button {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.8);
+            cursor: pointer;
+            padding: 0.2rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .user-profile button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: scale(1.1);
+        }
+
         /* 主要内容区域 */
         .main-content {
             margin-top: 100px;
@@ -300,10 +317,12 @@
                 CareerFlow
             </a>
             <ul class="nav-links">
-                <li><a href="#" onclick="searchFeatures()">搜索课程/技能/趋势</a></li>
+                <li><a href="/dashboard" class="active">个人中心</a></li>
+                <li><a href="/assessment">职业测评</a></li>
+                <li><a href="/courses">技能提升</a></li>
+                <li><a href="/goals">目标管理</a></li>
                 <li><a href="/career-planning">职业规划</a></li>
-                <li><a href="/skills-development">技能提升</a></li>
-                <li><a href="/industry-insights">行业洞察</a></li>
+                <li><a href="/industry">行业洞察</a></li>
                 <li>
                     <div class="user-profile">
                         <i class="fas fa-user-circle"></i>
@@ -331,7 +350,7 @@
                 <i class="fas fa-play"></i>
                 开启职业规划
             </a>
-            <a href="/skills-development" class="btn-secondary">
+            <a href="/courses" class="btn-secondary">
                 <i class="fas fa-search"></i>
                 快速挑选课程
             </a>
