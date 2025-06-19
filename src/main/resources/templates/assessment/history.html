@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测评历史 - CareerFlow</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 背景装饰 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 40%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(255,255,255,0.06) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        /* 主要内容 */
+        .main-content {
+            margin-top: 100px;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* 历史记录列表 */
+        .history-list {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .history-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .history-item:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .history-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .history-basic {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .assessment-date {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .recommended-career {
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .personality-type {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+        }
+
+        .scores-summary {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .scores-title {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .score-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .score-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .score-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.8rem;
+            width: 40px;
+            text-align: right;
+        }
+
+        .score-progress {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .score-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .score-value {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8rem;
+            width: 30px;
+            text-align: center;
+        }
+
+        .recommended-path {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .path-title {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .history-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .empty-description {
+            font-size: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* 分页 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .page-btn {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .page-btn:hover,
+        .page-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .history-item {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .history-content {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .history-actions {
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">CareerFlow</a>
+            <ul class="nav-links">
+                <li><a href="/dashboard">仪表板</a></li>
+                <li><a href="/career-planning">职业规划</a></li>
+                <li><a href="/courses">技能提升</a></li>
+                <li><a href="/goals">目标管理</a></li>
+                <li><a href="/industry">行业洞察</a></li>
+                <li><a href="/logout">退出</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <div class="main-content">
+        <div class="container">
+            <!-- 页面标题 -->
+            <div class="page-header">
+                <h1 class="page-title">测评历史</h1>
+                <p class="page-subtitle">查看您的所有职业测评记录和发展轨迹</p>
+            </div>
+
+            <!-- 历史记录列表 -->
+            <div class="history-list" th:if="${assessments != null and !assessments.isEmpty()}">
+                <div class="history-item" th:each="assessment : ${assessments}">
+                    <div class="history-content">
+                        <!-- 基本信息 -->
+                        <div class="history-basic">
+                            <div class="assessment-date" th:text="'测评时间: ' + ${#temporals.format(assessment.assessmentDate, 'yyyy-MM-dd HH:mm')}">
+                                测评时间: 2024-01-15 14:30
+                            </div>
+                            <div class="recommended-career" th:text="${assessment.recommendedCareer}">
+                                软件开发工程师
+                            </div>
+                            <div class="personality-type" th:text="${assessment.personalityType}">
+                                技术型 + 分析型
+                            </div>
+                        </div>
+
+                        <!-- 能力得分 -->
+                        <div class="scores-summary">
+                            <div class="scores-title">能力得分</div>
+                            <div class="score-bars">
+                                <div class="score-bar">
+                                    <div class="score-label">技术</div>
+                                    <div class="score-progress">
+                                        <div class="score-fill" style="width: 90%"></div>
+                                    </div>
+                                    <div class="score-value">18</div>
+                                </div>
+                                <div class="score-bar">
+                                    <div class="score-label">创意</div>
+                                    <div class="score-progress">
+                                        <div class="score-fill" style="width: 60%"></div>
+                                    </div>
+                                    <div class="score-value">12</div>
+                                </div>
+                                <div class="score-bar">
+                                    <div class="score-label">分析</div>
+                                    <div class="score-progress">
+                                        <div class="score-fill" style="width: 80%"></div>
+                                    </div>
+                                    <div class="score-value">16</div>
+                                </div>
+                                <div class="score-bar">
+                                    <div class="score-label">沟通</div>
+                                    <div class="score-progress">
+                                        <div class="score-fill" style="width: 50%"></div>
+                                    </div>
+                                    <div class="score-value">10</div>
+                                </div>
+                                <div class="score-bar">
+                                    <div class="score-label">管理</div>
+                                    <div class="score-progress">
+                                        <div class="score-fill" style="width: 40%"></div>
+                                    </div>
+                                    <div class="score-value">8</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 推荐路径 -->
+                        <div class="recommended-path">
+                            <div class="path-title">推荐路径</div>
+                            <div th:text="${assessment.recommendedPath}">
+                                1. 学习编程基础 → 2. 掌握开发框架 → 3. 参与项目实践 → 4. 提升系统设计能力
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 操作按钮 -->
+                    <div class="history-actions">
+                        <a th:href="@{/assessment/result/{id}(id=${assessment.id})}" class="btn btn-primary">
+                            查看详情
+                        </a>
+                        <a href="/goals" class="btn btn-secondary">
+                            设定目标
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 空状态 -->
+            <div class="empty-state" th:if="${assessments == null or assessments.isEmpty()}">
+                <div class="empty-icon">📊</div>
+                <h3 class="empty-title">还没有测评记录</h3>
+                <p class="empty-description">开始您的第一次职业测评，了解自己的职业倾向和发展方向</p>
+                <a href="/assessment/start" class="btn btn-primary">开始测评</a>
+            </div>
+
+            <!-- 分页（如果需要） -->
+            <div class="pagination" th:if="${assessments != null and assessments.size() > 10}">
+                <a href="#" class="page-btn">上一页</a>
+                <a href="#" class="page-btn active">1</a>
+                <a href="#" class="page-btn">2</a>
+                <a href="#" class="page-btn">3</a>
+                <a href="#" class="page-btn">下一页</a>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        // 动态解析能力得分
+        document.addEventListener('DOMContentLoaded', function() {
+            const assessments = /*[[${assessments}]]*/ [];
+            
+            assessments.forEach((assessment, index) => {
+                if (assessment.scores) {
+                    const scoreElements = document.querySelectorAll('.history-item')[index].querySelectorAll('.score-bar');
+                    const scores = {};
+                    
+                    // 解析得分字符串
+                    assessment.scores.split(',').forEach(item => {
+                        const [key, value] = item.split(':');
+                        scores[key] = parseInt(value) || 0;
+                    });
+                    
+                    // 更新进度条
+                    const categories = ['技术', '创意', '分析', '沟通', '管理'];
+                    categories.forEach((category, i) => {
+                        if (scoreElements[i]) {
+                            const score = scores[category] || 0;
+                            const percentage = (score / 20) * 100;
+                            
+                            const fillElement = scoreElements[i].querySelector('.score-fill');
+                            const valueElement = scoreElements[i].querySelector('.score-value');
+                            
+                            if (fillElement) fillElement.style.width = percentage + '%';
+                            if (valueElement) valueElement.textContent = score;
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

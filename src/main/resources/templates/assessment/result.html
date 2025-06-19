@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测评结果 - CareerFlow</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 背景装饰 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 40%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(255,255,255,0.06) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        /* 主要内容 */
+        .main-content {
+            margin-top: 100px;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 结果卡片 */
+        .result-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .result-title {
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+
+        .result-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 0.5rem;
+        }
+
+        .result-date {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        /* 推荐职业 */
+        .career-recommendation {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .career-title {
+            font-size: 2rem;
+            color: #FFD700;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .personality-type {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 1rem;
+        }
+
+        /* 能力雷达图 */
+        .radar-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .radar-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+        }
+
+        .radar-title {
+            font-size: 1.3rem;
+            color: white;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* 学习路径 */
+        .learning-path {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .path-title {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .path-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .path-step {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .path-step:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-weight: bold;
+        }
+
+        .step-title {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        /* 推荐课程 */
+        .recommended-courses {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .courses-title {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .course-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .course-card:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .course-title {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .course-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .course-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* 行动建议 */
+        .action-suggestions {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .suggestions-title {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .suggestion-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .suggestion-icon {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .suggestion-content {
+            flex: 1;
+        }
+
+        .suggestion-text {
+            color: white;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .suggestion-detail {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        /* 按钮 */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .result-title {
+                font-size: 2rem;
+            }
+
+            .radar-section {
+                grid-template-columns: 1fr;
+            }
+
+            .path-steps {
+                grid-template-columns: 1fr;
+            }
+
+            .courses-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">CareerFlow</a>
+            <ul class="nav-links">
+                <li><a href="/dashboard">仪表板</a></li>
+                <li><a href="/career-planning">职业规划</a></li>
+                <li><a href="/courses">技能提升</a></li>
+                <li><a href="/goals">目标管理</a></li>
+                <li><a href="/industry">行业洞察</a></li>
+                <li><a href="/logout">退出</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <div class="main-content">
+        <div class="container">
+            <!-- 结果头部 -->
+            <div class="result-card">
+                <div class="result-header">
+                    <h1 class="result-title">职业测评结果</h1>
+                    <p class="result-subtitle">基于您的回答，我们为您生成了个性化的职业发展建议</p>
+                    <p class="result-date" th:if="${assessment}" th:text="'测评时间: ' + ${#temporals.format(assessment.assessmentDate, 'yyyy-MM-dd HH:mm')}">
+                        测评时间: 2024-01-15 14:30
+                    </p>
+                </div>
+
+                <!-- 推荐职业 -->
+                <div class="career-recommendation">
+                    <div class="career-title" th:text="${assessment?.recommendedCareer ?: '软件开发工程师'}">
+                        软件开发工程师
+                    </div>
+                    <div class="personality-type" th:text="${assessment?.personalityType ?: '技术型 + 分析型'}">
+                        技术型 + 分析型
+                    </div>
+                </div>
+            </div>
+
+            <!-- 能力分析 -->
+            <div class="radar-section">
+                <div class="radar-card">
+                    <h3 class="radar-title">能力雷达图</h3>
+                    <div class="chart-container">
+                        <canvas id="abilityRadarChart"></canvas>
+                    </div>
+                </div>
+                <div class="radar-card">
+                    <h3 class="radar-title">能力得分详情</h3>
+                    <div class="chart-container">
+                        <canvas id="abilityBarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 学习路径 -->
+            <div class="learning-path">
+                <h3 class="path-title">🎯 推荐学习路径</h3>
+                <div class="path-steps">
+                    <div class="path-step">
+                        <div class="step-number">1</div>
+                        <div class="step-title">基础知识学习</div>
+                        <div class="step-description">掌握编程语言基础语法和核心概念</div>
+                    </div>
+                    <div class="path-step">
+                        <div class="step-number">2</div>
+                        <div class="step-title">框架技术掌握</div>
+                        <div class="step-description">学习主流开发框架和工具</div>
+                    </div>
+                    <div class="path-step">
+                        <div class="step-number">3</div>
+                        <div class="step-title">项目实践经验</div>
+                        <div class="step-description">参与实际项目开发，积累经验</div>
+                    </div>
+                    <div class="path-step">
+                        <div class="step-number">4</div>
+                        <div class="step-title">系统设计能力</div>
+                        <div class="step-description">提升架构设计和系统优化能力</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 推荐课程 -->
+            <div class="recommended-courses">
+                <h3 class="courses-title">📚 推荐课程</h3>
+                <div class="courses-grid">
+                    <div class="course-card">
+                        <div class="course-title">Java编程基础</div>
+                        <div class="course-description">从零开始学习Java编程语言，掌握面向对象编程思想</div>
+                        <div class="course-meta">
+                            <span>⭐ 4.8分</span>
+                            <span>⏱️ 40小时</span>
+                            <span>👥 1200人</span>
+                        </div>
+                    </div>
+                    <div class="course-card">
+                        <div class="course-title">Spring Boot实战</div>
+                        <div class="course-description">学习Spring Boot框架，快速构建企业级应用</div>
+                        <div class="course-meta">
+                            <span>⭐ 4.9分</span>
+                            <span>⏱️ 35小时</span>
+                            <span>👥 800人</span>
+                        </div>
+                    </div>
+                    <div class="course-card">
+                        <div class="course-title">数据库设计</div>
+                        <div class="course-description">掌握MySQL数据库设计和优化技巧</div>
+                        <div class="course-meta">
+                            <span>⭐ 4.7分</span>
+                            <span>⏱️ 25小时</span>
+                            <span>👥 650人</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 行动建议 -->
+            <div class="action-suggestions">
+                <h3 class="suggestions-title">💡 行动建议</h3>
+                <div class="suggestion-item">
+                    <div class="suggestion-icon">1</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">制定学习计划</div>
+                        <div class="suggestion-detail">根据推荐路径，制定3-6个月的详细学习计划，设定阶段性目标</div>
+                    </div>
+                </div>
+                <div class="suggestion-item">
+                    <div class="suggestion-icon">2</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">参与实践项目</div>
+                        <div class="suggestion-detail">在学习过程中，尝试完成小项目，将理论知识转化为实践经验</div>
+                    </div>
+                </div>
+                <div class="suggestion-item">
+                    <div class="suggestion-icon">3</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">建立学习社群</div>
+                        <div class="suggestion-detail">加入相关技术社群，与同行交流学习心得，获取最新技术动态</div>
+                    </div>
+                </div>
+                <div class="suggestion-item">
+                    <div class="suggestion-icon">4</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">定期复习评估</div>
+                        <div class="suggestion-detail">每月回顾学习进度，调整学习策略，确保按计划达成目标</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 行动按钮 -->
+            <div class="action-buttons">
+                <a href="/goals" class="btn btn-primary">设定学习目标</a>
+                <a href="/courses" class="btn btn-secondary">浏览课程</a>
+                <a href="/assessment" class="btn btn-secondary">重新测评</a>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        // 解析能力得分数据
+        const scoresData = /*[[${assessment?.scores}]]*/ 'technical:18,creative:12,analytical:16,communication:10,management:8';
+        const abilities = {};
+        
+        if (scoresData) {
+            scoresData.split(',').forEach(item => {
+                const [key, value] = item.split(':');
+                abilities[key] = parseInt(value) || 0;
+            });
+        }
+
+        // 默认数据
+        const defaultAbilities = {
+            '技术': abilities['技术'] || 18,
+            '创意': abilities['创意'] || 12,
+            '分析': abilities['分析'] || 16,
+            '沟通': abilities['沟通'] || 10,
+            '管理': abilities['管理'] || 8
+        };
+
+        // 雷达图
+        const radarCtx = document.getElementById('abilityRadarChart').getContext('2d');
+        new Chart(radarCtx, {
+            type: 'radar',
+            data: {
+                labels: Object.keys(defaultAbilities),
+                datasets: [{
+                    label: '能力得分',
+                    data: Object.values(defaultAbilities),
+                    backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                    borderColor: 'rgba(102, 126, 234, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(102, 126, 234, 1)',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white'
+                        }
+                    }
+                },
+                scales: {
+                    r: {
+                        angleLines: {
+                            color: 'rgba(255, 255, 255, 0.2)'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.2)'
+                        },
+                        pointLabels: {
+                            color: 'white'
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            backdropColor: 'transparent'
+                        },
+                        min: 0,
+                        max: 20
+                    }
+                }
+            }
+        });
+
+        // 柱状图
+        const barCtx = document.getElementById('abilityBarChart').getContext('2d');
+        new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(defaultAbilities),
+                datasets: [{
+                    label: '能力得分',
+                    data: Object.values(defaultAbilities),
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.8)',
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(255, 205, 86, 0.8)',
+                        'rgba(75, 192, 192, 0.8)',
+                        'rgba(153, 102, 255, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 205, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.8)'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.8)'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        min: 0,
+                        max: 20
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

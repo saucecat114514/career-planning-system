@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>目标管理 - CareerFlow</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 背景装饰 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 40%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(255,255,255,0.06) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        /* 主要内容 */
+        .main-content {
+            margin-top: 100px;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+        }
+
+        /* 创建目标按钮 */
+        .create-goal-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .create-goal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 目标列表 */
+        .goals-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .goals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .goal-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .goal-card:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .goal-title {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 500;
+            flex: 1;
+            margin-right: 1rem;
+        }
+
+        .goal-priority {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .priority-high {
+            background: rgba(255, 107, 107, 0.3);
+            color: #ff6b6b;
+            border: 1px solid rgba(255, 107, 107, 0.5);
+        }
+
+        .priority-medium {
+            background: rgba(255, 193, 7, 0.3);
+            color: #ffc107;
+            border: 1px solid rgba(255, 193, 7, 0.5);
+        }
+
+        .priority-low {
+            background: rgba(40, 167, 69, 0.3);
+            color: #28a745;
+            border: 1px solid rgba(40, 167, 69, 0.5);
+        }
+
+        .goal-category {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .goal-progress {
+            margin-bottom: 1rem;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .goal-date {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
+            text-align: right;
+        }
+
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            margin: 15% auto;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            color: white;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+
+        .close {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+
+            .goals-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">CareerFlow</a>
+            <ul class="nav-links">
+                <li><a href="/dashboard">仪表板</a></li>
+                <li><a href="/career-planning">职业规划</a></li>
+                <li><a href="/courses">技能提升</a></li>
+                <li><a href="/goals" class="active">目标管理</a></li>
+                <li><a href="/industry-insights">行业洞察</a></li>
+                <li><a href="/logout">退出</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <div class="main-content">
+        <div class="container">
+            <!-- 页面标题 -->
+            <div class="page-header">
+                <h1 class="page-title">目标管理</h1>
+                <p class="page-subtitle">设定明确的目标，追踪进度，实现职业发展规划</p>
+            </div>
+
+            <!-- 统计信息 -->
+            <div class="stats-grid" th:if="${statistics}">
+                <div class="stat-card">
+                    <div class="stat-number" th:text="${statistics.totalGoals}">0</div>
+                    <div class="stat-label">总目标数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" th:text="${statistics.activeGoals}">0</div>
+                    <div class="stat-label">活跃目标</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" th:text="${statistics.completedGoals}">0</div>
+                    <div class="stat-label">已完成</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" th:text="${statistics.averageProgress + '%'}">0%</div>
+                    <div class="stat-label">平均进度</div>
+                </div>
+            </div>
+
+            <!-- 创建目标按钮 -->
+            <button class="create-goal-btn" onclick="openCreateModal()">
+                ✨ 创建新目标
+            </button>
+
+            <!-- 活跃目标 -->
+            <div class="goals-section" th:if="${activeGoals != null and !activeGoals.isEmpty()}">
+                <h2 class="section-title">🎯 活跃目标</h2>
+                <div class="goals-grid">
+                    <div class="goal-card" th:each="goal : ${activeGoals}">
+                        <div class="goal-header">
+                            <div class="goal-title" th:text="${goal.goalDescription}">目标描述</div>
+                            <div class="goal-priority" 
+                                 th:classappend="${goal.priority >= 4} ? 'priority-high' : (${goal.priority >= 2} ? 'priority-medium' : 'priority-low')"
+                                 th:text="${goal.priority >= 4} ? '高优先级' : (${goal.priority >= 2} ? '中优先级' : '低优先级')">
+                                优先级
+                            </div>
+                        </div>
+                        <div class="goal-category" th:text="${goal.category}">分类</div>
+                        <div class="goal-progress">
+                            <div class="progress-label">
+                                <span>进度</span>
+                                <span th:text="${goal.progressPercentage + '%'}">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" th:style="'width: ' + ${goal.progressPercentage} + '%'"></div>
+                            </div>
+                        </div>
+                        <div class="goal-date" th:if="${goal.targetDate}" th:text="'目标日期: ' + ${#temporals.format(goal.targetDate, 'yyyy-MM-dd')}">
+                            目标日期
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 即将到期的目标 -->
+            <div class="goals-section" th:if="${upcomingGoals != null and !upcomingGoals.isEmpty()}">
+                <h2 class="section-title">⏰ 即将到期</h2>
+                <div class="goals-grid">
+                    <div class="goal-card" th:each="goal : ${upcomingGoals}">
+                        <div class="goal-header">
+                            <div class="goal-title" th:text="${goal.goalDescription}">目标描述</div>
+                            <div class="goal-priority priority-high">紧急</div>
+                        </div>
+                        <div class="goal-category" th:text="${goal.category}">分类</div>
+                        <div class="goal-progress">
+                            <div class="progress-label">
+                                <span>进度</span>
+                                <span th:text="${goal.progressPercentage + '%'}">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" th:style="'width: ' + ${goal.progressPercentage} + '%'"></div>
+                            </div>
+                        </div>
+                        <div class="goal-date" th:if="${goal.targetDate}" th:text="'目标日期: ' + ${#temporals.format(goal.targetDate, 'yyyy-MM-dd')}">
+                            目标日期
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 高优先级目标 -->
+            <div class="goals-section" th:if="${highPriorityGoals != null and !highPriorityGoals.isEmpty()}">
+                <h2 class="section-title">🔥 高优先级目标</h2>
+                <div class="goals-grid">
+                    <div class="goal-card" th:each="goal : ${highPriorityGoals}">
+                        <div class="goal-header">
+                            <div class="goal-title" th:text="${goal.goalDescription}">目标描述</div>
+                            <div class="goal-priority priority-high">高优先级</div>
+                        </div>
+                        <div class="goal-category" th:text="${goal.category}">分类</div>
+                        <div class="goal-progress">
+                            <div class="progress-label">
+                                <span>进度</span>
+                                <span th:text="${goal.progressPercentage + '%'}">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" th:style="'width: ' + ${goal.progressPercentage} + '%'"></div>
+                            </div>
+                        </div>
+                        <div class="goal-date" th:if="${goal.targetDate}" th:text="'目标日期: ' + ${#temporals.format(goal.targetDate, 'yyyy-MM-dd')}">
+                            目标日期
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 空状态 -->
+            <div th:if="${activeGoals == null or activeGoals.isEmpty()}" style="text-align: center; padding: 3rem; color: rgba(255, 255, 255, 0.7);">
+                <h3>还没有设置任何目标</h3>
+                <p>点击上方的"创建新目标"按钮开始设定你的职业发展目标吧！</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 创建目标模态框 -->
+    <div id="createGoalModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">创建新目标</h2>
+                <span class="close" onclick="closeCreateModal()">&times;</span>
+            </div>
+            <form action="/goals/create" method="post">
+                <div class="form-group">
+                    <label class="form-label" for="goalDescription">目标描述</label>
+                    <input type="text" id="goalDescription" name="goalDescription" class="form-control" 
+                           placeholder="例如：在3个月内掌握Spring Boot开发" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="category">目标分类</label>
+                    <select id="category" name="category" class="form-control" required>
+                        <option value="">请选择分类</option>
+                        <option value="技术学习">技术学习</option>
+                        <option value="职业发展">职业发展</option>
+                        <option value="项目实践">项目实践</option>
+                        <option value="认证考试">认证考试</option>
+                        <option value="软技能">软技能</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="targetDate">目标日期</label>
+                    <input type="date" id="targetDate" name="targetDate" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="priority">优先级</label>
+                    <select id="priority" name="priority" class="form-control">
+                        <option value="1">低优先级</option>
+                        <option value="2">中优先级</option>
+                        <option value="3" selected>中优先级</option>
+                        <option value="4">高优先级</option>
+                        <option value="5">最高优先级</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">创建目标</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openCreateModal() {
+            document.getElementById('createGoalModal').style.display = 'block';
+        }
+
+        function closeCreateModal() {
+            document.getElementById('createGoalModal').style.display = 'none';
+        }
+
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+            const modal = document.getElementById('createGoalModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // 设置默认日期为一个月后
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.getElementById('targetDate');
+            const today = new Date();
+            const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, today.getDate());
+            dateInput.value = nextMonth.toISOString().split('T')[0];
+        });
+    </script>
+</body>
+</html>

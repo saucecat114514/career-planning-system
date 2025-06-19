@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>行业洞察 - CareerFlow</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 背景装饰 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 40%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(255,255,255,0.06) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        /* 主要内容 */
+        .main-content {
+            margin-top: 100px;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* 卡片容器 */
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .insight-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .insight-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            color: white;
+            font-weight: 500;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 1rem;
+        }
+
+        /* 热门行业列表 */
+        .industry-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .industry-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .industry-item:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .industry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .industry-name {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .industry-trend {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .trend-icon {
+            font-size: 1.2rem;
+        }
+
+        .trend-up {
+            color: #4CAF50;
+        }
+
+        .trend-stable {
+            color: #FFC107;
+        }
+
+        .trend-down {
+            color: #F44336;
+        }
+
+        .industry-percentage {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .industry-description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        /* 技能词云 */
+        .skills-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+        }
+
+        .skill-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 0.5rem 1rem;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .skill-item:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* 技能大小根据权重调整 */
+        .skill-large {
+            font-size: 1.4rem;
+            padding: 0.8rem 1.5rem;
+        }
+
+        .skill-medium {
+            font-size: 1.1rem;
+            padding: 0.6rem 1.2rem;
+        }
+
+        .skill-small {
+            font-size: 0.9rem;
+            padding: 0.4rem 0.8rem;
+        }
+
+        /* 统计数字 */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .insights-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .industry-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">CareerFlow</a>
+            <ul class="nav-links">
+                <li><a href="/dashboard">仪表板</a></li>
+                <li><a href="/career-planning">职业规划</a></li>
+                <li><a href="/courses">技能提升</a></li>
+                <li><a href="/goals">目标管理</a></li>
+                <li><a href="/industry" class="active">行业洞察</a></li>
+                <li><a href="/logout">退出</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <div class="main-content">
+        <div class="container">
+            <!-- 页面标题 -->
+            <div class="page-header">
+                <h1 class="page-title">行业洞察</h1>
+                <p class="page-subtitle">基于大数据分析的行业趋势、技能需求和薪资水平洞察</p>
+            </div>
+
+            <!-- 统计概览 -->
+            <div class="stats-row">
+                <div class="stat-box">
+                    <div class="stat-number">156</div>
+                    <div class="stat-label">热门职位</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">2.3万</div>
+                    <div class="stat-label">月新增岗位</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">15.8%</div>
+                    <div class="stat-label">平均薪资增长</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">89</div>
+                    <div class="stat-label">核心技能</div>
+                </div>
+            </div>
+
+            <!-- 数据可视化 -->
+            <div class="insights-grid">
+                <!-- 行业趋势图 -->
+                <div class="insight-card">
+                    <div class="card-header">
+                        <span class="card-icon">📈</span>
+                        <h2 class="card-title">行业热度趋势</h2>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="industryTrendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 薪资趋势图 -->
+                <div class="insight-card">
+                    <div class="card-header">
+                        <span class="card-icon">💰</span>
+                        <h2 class="card-title">薪资水平分析</h2>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="salaryTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 技能需求词云 -->
+            <div class="insight-card">
+                <div class="card-header">
+                    <span class="card-icon">🎯</span>
+                    <h2 class="card-title">热门技能需求</h2>
+                </div>
+                <div class="skills-cloud">
+                    <div th:each="skill : ${skillsData}" 
+                         th:class="'skill-item ' + (${skill.value >= 80} ? 'skill-large' : (${skill.value >= 60} ? 'skill-medium' : 'skill-small'))"
+                         th:text="${skill.name}">
+                        技能名称
+                    </div>
+                </div>
+            </div>
+
+            <!-- 热门行业 -->
+            <div class="insight-card">
+                <div class="card-header">
+                    <span class="card-icon">🏢</span>
+                    <h2 class="card-title">热门行业分析</h2>
+                </div>
+                <div class="industry-list">
+                    <div class="industry-item" th:each="industry : ${popularIndustries}">
+                        <div class="industry-header">
+                            <div class="industry-name" th:text="${industry.name}">行业名称</div>
+                            <div class="industry-trend">
+                                <span class="trend-icon" 
+                                      th:classappend="${industry.direction == 'up'} ? 'trend-up' : (${industry.direction == 'stable'} ? 'trend-stable' : 'trend-down')"
+                                      th:text="${industry.direction == 'up'} ? '↗' : (${industry.direction == 'stable'} ? '→' : '↘')">
+                                    ↗
+                                </span>
+                            </div>
+                        </div>
+                        <div class="industry-percentage" th:text="${industry.percentage + '%'}">0%</div>
+                        <div class="industry-description" th:text="${industry.trend}">趋势描述</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        // 获取后端数据
+        const industryTrends = /*[[${industryTrends}]]*/ {};
+        const salaryTrends = /*[[${salaryTrends}]]*/ {};
+
+        // 行业趋势图
+        const industryCtx = document.getElementById('industryTrendChart').getContext('2d');
+        new Chart(industryCtx, {
+            type: 'line',
+            data: {
+                labels: industryTrends.months,
+                datasets: Object.entries(industryTrends.industries).map((entry, index) => {
+                    const colors = [
+                        'rgba(255, 99, 132, 0.8)',
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(255, 205, 86, 0.8)',
+                        'rgba(75, 192, 192, 0.8)',
+                        'rgba(153, 102, 255, 0.8)'
+                    ];
+                    return {
+                        label: entry[0],
+                        data: entry[1],
+                        borderColor: colors[index % colors.length],
+                        backgroundColor: colors[index % colors.length].replace('0.8', '0.2'),
+                        tension: 0.4,
+                        fill: false
+                    };
+                })
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.8)'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.8)'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // 薪资趋势图
+        const salaryCtx = document.getElementById('salaryTrendChart').getContext('2d');
+        new Chart(salaryCtx, {
+            type: 'bar',
+            data: {
+                labels: salaryTrends.levels,
+                datasets: Object.entries(salaryTrends.positions).map((entry, index) => {
+                    const colors = [
+                        'rgba(255, 99, 132, 0.8)',
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(255, 205, 86, 0.8)',
+                        'rgba(75, 192, 192, 0.8)',
+                        'rgba(153, 102, 255, 0.8)'
+                    ];
+                    return {
+                        label: entry[0],
+                        data: entry[1],
+                        backgroundColor: colors[index % colors.length],
+                        borderColor: colors[index % colors.length].replace('0.8', '1'),
+                        borderWidth: 1
+                    };
+                })
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.8)'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            callback: function(value) {
+                                return value + 'K';
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

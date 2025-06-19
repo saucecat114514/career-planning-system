@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>技能提升课程 - CareerFlow</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 动态背景装饰 */
+        .bg-decoration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            backdrop-filter: blur(10px);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-element:nth-child(1) {
+            width: 100px;
+            height: 100px;
+            top: 10%;
+            left: 15%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 80px;
+            height: 80px;
+            top: 70%;
+            right: 20%;
+            animation-delay: 3s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            bottom: 30%;
+            left: 25%;
+            animation-delay: 1.5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* 主容器 */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* 主标题区域 */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-section p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        /* 搜索和筛选区域 */
+        .filter-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 1rem;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-btn {
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .filter-tab:hover, .filter-tab.active {
+            background: rgba(79, 172, 254, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* 课程网格 */
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .course-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .course-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .course-category {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .course-title {
+            color: white;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .course-description {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .course-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .course-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #ffd700;
+        }
+
+        .course-duration {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .course-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .course-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .course-tag {
+            background: rgba(79, 172, 254, 0.3);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
+        .course-action {
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .course-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+        }
+
+        /* 统计信息 */
+        .stats-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            opacity: 0.8;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+
+            .courses-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .filter-tabs {
+                justify-content: center;
+            }
+        }
+
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 动态背景装饰 -->
+    <div class="bg-decoration">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+    </div>
+
+    <div class="container">
+        <!-- 导航栏 -->
+        <nav class="navbar">
+            <div class="logo">🎯 CareerFlow</div>
+            <div class="nav-links">
+                <a href="/dashboard">仪表板</a>
+                <a href="/assessment">职业测评</a>
+                <a href="/career-planning">职业规划</a>
+                <a href="/goals">目标管理</a>
+                <a href="/industry">行业洞察</a>
+            </div>
+        </nav>
+
+        <!-- 主标题区域 -->
+        <section class="hero-section">
+            <h1>📚 技能提升课程</h1>
+            <p>精选优质课程，助您提升职业技能，实现职业目标</p>
+        </section>
+
+        <!-- 搜索和筛选区域 -->
+        <section class="filter-section">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="搜索课程名称、技能或关键词..." id="searchInput">
+                <button class="search-btn" onclick="searchCourses()">🔍 搜索</button>
+            </div>
+            <div class="filter-tabs">
+                <button class="filter-tab active" onclick="filterByCategory('all')">全部课程</button>
+                <button class="filter-tab" onclick="filterByCategory('编程开发')">编程开发</button>
+                <button class="filter-tab" onclick="filterByCategory('数据分析')">数据分析</button>
+                <button class="filter-tab" onclick="filterByCategory('设计创意')">设计创意</button>
+                <button class="filter-tab" onclick="filterByCategory('产品管理')">产品管理</button>
+                <button class="filter-tab" onclick="filterByCategory('项目管理')">项目管理</button>
+                <button class="filter-tab" onclick="filterByCategory('综合技能')">综合技能</button>
+            </div>
+        </section>
+
+        <!-- 统计信息 -->
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" th:text="${#lists.size(courses)}">156</div>
+                    <div class="stat-label">精品课程</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" th:text="${#lists.size(categories)}">8</div>
+                    <div class="stat-label">专业领域</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">98%</div>
+                    <div class="stat-label">学员满意度</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">在线学习</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 课程网格 -->
+        <section class="courses-grid" id="coursesGrid">
+            <div th:each="course : ${courses}" class="course-card" th:data-category="${course.category}">
+                <div class="course-category" th:text="${course.category}">编程开发</div>
+                
+                <h3 class="course-title" th:text="${course.title}">Java Spring Boot 实战</h3>
+                
+                <p class="course-description" th:text="${course.description}">
+                    全面学习Spring Boot框架，掌握企业级Java开发技能...
+                </p>
+                
+                <div class="course-meta">
+                    <div class="course-rating">
+                        <span>⭐</span>
+                        <span th:text="${course.rating}">4.8</span>
+                    </div>
+                    <div class="course-duration" th:text="${course.duration} + '小时'">40小时</div>
+                </div>
+                
+                <div class="course-stats">
+                    <span>难度：<span th:text="${course.difficulty}">中级</span></span>
+                    <span>学员：<span th:text="${course.enrollmentCount}">1250</span>人</span>
+                </div>
+                
+                <div class="course-tags" th:if="${course.tags}">
+                    <span th:each="tag : ${#strings.listSplit(course.tags, ',')}" 
+                          class="course-tag" th:text="${tag}">Java</span>
+                </div>
+                
+                <button class="course-action" th:onclick="'enrollCourse(' + ${course.id} + ')'">
+                    立即学习
+                </button>
+            </div>
+        </section>
+
+        <!-- 推荐课程区域 -->
+        <section class="stats-section" th:if="${recommendedCourses != null and !#lists.isEmpty(recommendedCourses)}">
+            <h3 style="color: white; margin-bottom: 2rem; text-align: center;">
+                🎯 为您推荐的课程
+            </h3>
+            <div class="courses-grid">
+                <div th:each="course : ${recommendedCourses}" class="course-card">
+                    <div class="course-category" th:text="${course.category}">推荐</div>
+                    <h3 class="course-title" th:text="${course.title}">推荐课程</h3>
+                    <p class="course-description" th:text="${course.description}">课程描述</p>
+                    <div class="course-meta">
+                        <div class="course-rating">
+                            <span>⭐</span>
+                            <span th:text="${course.rating}">4.8</span>
+                        </div>
+                        <div class="course-duration" th:text="${course.duration} + '小时'">40小时</div>
+                    </div>
+                    <button class="course-action" th:onclick="'enrollCourse(' + ${course.id} + ')'">
+                        立即学习
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        function filterByCategory(category) {
+            // 更新活跃标签
+            document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // 筛选课程
+            const courseCards = document.querySelectorAll('.course-card');
+            courseCards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'block';
+                    card.style.animation = 'slideIn 0.5s ease';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function searchCourses() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const courseCards = document.querySelectorAll('.course-card');
+            
+            courseCards.forEach(card => {
+                const title = card.querySelector('.course-title').textContent.toLowerCase();
+                const description = card.querySelector('.course-description').textContent.toLowerCase();
+                const tags = card.querySelector('.course-tags')?.textContent.toLowerCase() || '';
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm) || tags.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function enrollCourse(courseId) {
+            // 这里可以添加课程报名逻辑
+            alert('正在跳转到课程详情页面...');
+            // window.location.href = '/courses/' + courseId;
+        }
+
+        // 回车搜索
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchCourses();
+            }
+        });
+
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.course-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>职业测评 - CareerFlow</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 动态背景装饰 */
+        .bg-decoration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            backdrop-filter: blur(10px);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-element:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* 主容器 */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* 主标题区域 */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-section p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* 测评卡片区域 */
+        .assessment-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .assessment-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .assessment-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .card-description {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-action {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .card-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        /* 历史记录区域 */
+        .history-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .history-title {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .history-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+        }
+
+        .history-info {
+            color: white;
+        }
+
+        .history-date {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .view-result-btn {
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .view-result-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+
+            .assessment-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 动态背景装饰 -->
+    <div class="bg-decoration">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+    </div>
+
+    <div class="container">
+        <!-- 导航栏 -->
+        <nav class="navbar">
+            <div class="logo">🎯 CareerFlow</div>
+            <div class="nav-links">
+                <a href="/dashboard">仪表板</a>
+                <a href="/career-planning">职业规划</a>
+                <a href="/courses">技能提升</a>
+                <a href="/goals">目标管理</a>
+                <a href="/industry">行业洞察</a>
+            </div>
+        </nav>
+
+        <!-- 主标题区域 -->
+        <section class="hero-section">
+            <h1>🧠 职业测评中心</h1>
+            <p>通过科学的职业测评，深入了解自己的职业兴趣、性格特点和能力优势，为您的职业发展提供精准指导</p>
+        </section>
+
+        <!-- 测评卡片区域 -->
+        <section class="assessment-section">
+            <!-- 新测评卡片 -->
+            <div class="assessment-card" onclick="startAssessment()">
+                <span class="card-icon">🚀</span>
+                <h3 class="card-title">开始职业测评</h3>
+                <p class="card-description">
+                    全面的职业能力和兴趣测评，包含25个精心设计的问题，
+                    从技术能力、创意思维、分析能力、沟通技巧、管理潜力等多个维度评估您的职业适配性。
+                </p>
+                <button class="card-action">立即开始测评</button>
+            </div>
+
+            <!-- 测评历史卡片 -->
+            <div class="assessment-card" onclick="viewHistory()">
+                <span class="card-icon">📊</span>
+                <h3 class="card-title">测评历史</h3>
+                <p class="card-description">
+                    查看您的历史测评记录，对比不同时期的测评结果，
+                    跟踪您的职业发展轨迹和能力成长变化。
+                </p>
+                <button class="card-action">查看历史记录</button>
+            </div>
+
+            <!-- 测评报告卡片 -->
+            <div class="assessment-card" th:if="${latestAssessment != null}" onclick="viewLatestResult()">
+                <span class="card-icon">📋</span>
+                <h3 class="card-title">最新测评报告</h3>
+                <p class="card-description">
+                    <strong th:text="${latestAssessment.recommendedCareer}">推荐职业</strong><br>
+                    性格类型：<span th:text="${latestAssessment.personalityType}">性格类型</span><br>
+                    测评时间：<span th:text="${#temporals.format(latestAssessment.assessmentDate, 'yyyy-MM-dd')}">日期</span>
+                </p>
+                <button class="card-action">查看详细报告</button>
+            </div>
+        </section>
+
+        <!-- 测评历史记录 -->
+        <section class="history-section" th:if="${hasAssessment}">
+            <h3 class="history-title">
+                <span>📈</span> 最近测评记录
+            </h3>
+            <div class="history-item" th:if="${latestAssessment != null}">
+                <div class="history-info">
+                    <div>推荐职业：<span th:text="${latestAssessment.recommendedCareer}">职业</span></div>
+                    <div class="history-date" th:text="${#temporals.format(latestAssessment.assessmentDate, 'yyyy年MM月dd日')}">日期</div>
+                </div>
+                <button class="view-result-btn" th:onclick="'viewResult(' + ${latestAssessment.id} + ')'">查看结果</button>
+            </div>
+        </section>
+
+        <!-- 测评说明 -->
+        <section class="history-section">
+            <h3 class="history-title">
+                <span>💡</span> 测评说明
+            </h3>
+            <div style="color: rgba(255, 255, 255, 0.8); line-height: 1.6;">
+                <p>• 测评包含25个问题，预计用时10-15分钟</p>
+                <p>• 请根据您的真实想法选择最符合的选项</p>
+                <p>• 测评结果将为您推荐最适合的职业方向</p>
+                <p>• 建议每3-6个月重新测评一次，跟踪职业发展变化</p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        function startAssessment() {
+            window.location.href = '/assessment/start';
+        }
+
+        function viewHistory() {
+            window.location.href = '/assessment/history';
+        }
+
+        function viewLatestResult() {
+            const latestId = /*[[${latestAssessment?.id}]]*/ null;
+            if (latestId) {
+                window.location.href = '/assessment/result/' + latestId;
+            }
+        }
+
+        function viewResult(id) {
+            window.location.href = '/assessment/result/' + id;
+        }
+
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.assessment-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        });
+    </script>
+</body>
+</html> 
