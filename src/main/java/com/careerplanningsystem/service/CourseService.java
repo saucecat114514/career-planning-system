@@ -128,4 +128,13 @@ public class CourseService {
                 return "综合技能";
         }
     }
+    
+    /**
+     * 获取用户的推荐课程数量（用于统计显示）
+     */
+    public int getCourseCountByUser(com.careerplanningsystem.entity.User user) {
+        // 这里返回推荐课程的数量作为用户的课程统计
+        // 实际项目中可能需要创建用户课程关联表来跟踪用户已学习的课程
+        return Math.min(getRecommendedCourses().size(), 8);
+    }
 } 

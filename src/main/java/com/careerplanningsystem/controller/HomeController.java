@@ -75,6 +75,15 @@ public class HomeController {
                 // 获取目标统计信息
                 UserGoalService.GoalStatistics statistics = userGoalService.getGoalStatistics(user);
                 model.addAttribute("goalStatistics", statistics);
+                
+                // 添加用户统计数据
+                int assessmentCount = assessmentService.getAssessmentCountByUser(user);
+                int goalCount = userGoalService.getGoalCountByUser(user);
+                int courseCount = courseService.getCourseCountByUser(user);
+                
+                model.addAttribute("assessmentCount", assessmentCount);
+                model.addAttribute("goalCount", goalCount);
+                model.addAttribute("courseCount", courseCount);
             }
             
             model.addAttribute("username", authentication.getName());

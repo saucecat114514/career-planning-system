@@ -200,4 +200,11 @@ public class UserGoalService {
             return activeCount + completedCount + pausedCount + cancelledCount;
         }
     }
+    
+    /**
+     * 获取用户的目标总数
+     */
+    public int getGoalCountByUser(User user) {
+        return userGoalRepository.findByUserOrderByCreatedAtDesc(user).size();
+    }
 } 

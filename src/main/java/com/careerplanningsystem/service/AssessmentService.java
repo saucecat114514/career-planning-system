@@ -211,4 +211,11 @@ public class AssessmentService {
     public Optional<Assessment> getAssessmentById(Long id) {
         return assessmentRepository.findById(id);
     }
+    
+    /**
+     * 获取用户的测评次数
+     */
+    public int getAssessmentCountByUser(User user) {
+        return assessmentRepository.findByUserOrderByAssessmentDateDesc(user).size();
+    }
 } 

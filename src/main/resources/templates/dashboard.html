@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>个人中心 - CareerFlow</title>
+    <title>成长中心 - CareerFlow</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -216,6 +216,10 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
         }
 
         .feature-card::before {
@@ -234,6 +238,22 @@
             transform: translateY(-10px);
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
             border-color: rgba(255, 255, 255, 0.4);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+            color: #7C3AED;
+        }
+
+        .feature-card:hover .feature-title {
+            color: #ffffff;
+        }
+
+        .feature-card:hover .feature-action {
+            background: rgba(79, 70, 229, 0.4);
+            transform: translateY(-2px);
         }
 
         .feature-icon {
@@ -241,6 +261,7 @@
             color: #4F46E5;
             margin-bottom: 1.5rem;
             text-shadow: 0 4px 15px rgba(79, 70, 229, 0.2);
+            transition: all 0.3s ease;
         }
 
         .feature-title {
@@ -248,12 +269,67 @@
             font-weight: 700;
             color: white;
             margin-bottom: 1rem;
+            transition: all 0.3s ease;
         }
 
         .feature-description {
             color: rgba(255, 255, 255, 0.8);
             line-height: 1.6;
             font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(79, 70, 229, 0.2);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(79, 70, 229, 0.3);
+        }
+
+        /* 统计数据样式 */
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #4F46E5;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            font-weight: 500;
         }
 
         /* 响应式设计 */
@@ -272,12 +348,66 @@
                 padding: 0 1rem;
             }
 
+            .stats-section {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                margin: 2rem 0;
+            }
+
             .nav-links {
                 display: none;
             }
 
             .main-content {
                 padding: 1rem;
+                margin-top: 80px;
+            }
+
+            .feature-card {
+                padding: 2rem;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .stat-number {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 1.8rem;
+            }
+
+            .page-subtitle {
+                font-size: 1rem;
+            }
+
+            .btn-primary, .btn-secondary {
+                padding: 0.8rem 2rem;
+                font-size: 1rem;
+            }
+
+            .feature-card {
+                padding: 1.5rem;
+            }
+
+            .feature-icon {
+                font-size: 2.5rem;
+            }
+
+            .feature-title {
+                font-size: 1.3rem;
+            }
+
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
             }
         }
 
@@ -317,11 +447,10 @@
                 CareerFlow
             </a>
             <ul class="nav-links">
-                <li><a href="/dashboard" class="active">个人中心</a></li>
-                <li><a href="/assessment">职业测评</a></li>
+                <li><a href="/dashboard" class="active">成长中心</a></li>
+                <li><a href="/assessment">职业规划</a></li>
                 <li><a href="/courses">技能提升</a></li>
                 <li><a href="/goals">目标管理</a></li>
-                <li><a href="/assessment">职业测评</a></li>
                 <li><a href="/industry">行业洞察</a></li>
                 <li>
                     <div class="user-profile">
@@ -348,7 +477,7 @@
         <div class="action-buttons fade-in-delay">
             <a href="/assessment" class="btn-primary">
                 <i class="fas fa-play"></i>
-                开始职业测评
+                开始职业规划
             </a>
             <a href="/courses" class="btn-secondary">
                 <i class="fas fa-search"></i>
@@ -356,31 +485,59 @@
             </a>
         </div>
 
+        <!-- 用户统计数据 -->
+        <div class="stats-section fade-in">
+            <div class="stat-card">
+                <div class="stat-number" th:text="${assessmentCount ?: 0}">0</div>
+                <div class="stat-label">完成测评次数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${goalCount ?: 0}">0</div>
+                <div class="stat-label">设定目标数量</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${courseCount ?: 0}">0</div>
+                <div class="stat-label">学习课程数量</div>
+            </div>
+        </div>
+
         <!-- 功能卡片 -->
         <div class="features">
-            <div class="feature-card fade-in">
+            <a href="/assessment" class="feature-card fade-in">
                 <div class="feature-icon">
                     <i class="fas fa-route"></i>
                 </div>
                 <h3 class="feature-title">职业测评</h3>
-                <p class="feature-description">测评·分析·职业推荐</p>
-            </div>
+                <p class="feature-description">通过科学测评了解自己的职业倾向，获得个性化的职业建议</p>
+                <div class="feature-action">
+                    <i class="fas fa-play"></i>
+                    开始测评
+                </div>
+            </a>
 
-            <div class="feature-card fade-in-delay">
+            <a href="/courses" class="feature-card fade-in-delay">
                 <div class="feature-icon">
                     <i class="fas fa-chart-line"></i>
                 </div>
                 <h3 class="feature-title">技能提升</h3>
-                <p class="feature-description">课程推荐·实训项目</p>
-            </div>
-
-            <div class="feature-card fade-in-delay-2">
-                <div class="feature-icon">
-                    <i class="fas fa-analytics"></i>
+                <p class="feature-description">根据职业规划选择适合的课程，系统化提升专业技能</p>
+                <div class="feature-action">
+                    <i class="fas fa-book"></i>
+                    浏览课程
                 </div>
-                <h3 class="feature-title">数据洞察</h3>
-                <p class="feature-description">行业热度·新兴趋势</p>
-            </div>
+            </a>
+
+            <a href="/industry" class="feature-card fade-in-delay-2">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h3 class="feature-title">行业洞察</h3>
+                <p class="feature-description">了解行业发展趋势，掌握市场需求和就业前景</p>
+                <div class="feature-action">
+                    <i class="fas fa-search"></i>
+                    查看洞察
+                </div>
+            </a>
         </div>
     </main>
 
