@@ -83,11 +83,6 @@ public class HomeController {
         return "redirect:/login";
     }
 
-    @GetMapping("/career-planning")
-    public String careerPlanning() {
-        return "career-planning";
-    }
-
     @GetMapping("/skills-development")
     public String skillsDevelopment() {
         return "redirect:/courses";
