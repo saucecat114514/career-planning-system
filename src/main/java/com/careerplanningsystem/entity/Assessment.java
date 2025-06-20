@@ -28,6 +28,9 @@ public class Assessment {
     @Column(name = "scores", columnDefinition = "TEXT")
     private String scores; // 各分类得分
     
+    @Column(name = "assessment_type", nullable = false)
+    private String assessmentType = "CAREER_ASSESSMENT"; // 测评类型，默认为职业测评
+    
     @Column(name = "assessment_date")
     private LocalDateTime assessmentDate; // 测评日期
     
@@ -104,6 +107,14 @@ public class Assessment {
     
     public void setScores(String scores) {
         this.scores = scores;
+    }
+    
+    public String getAssessmentType() {
+        return assessmentType;
+    }
+    
+    public void setAssessmentType(String assessmentType) {
+        this.assessmentType = assessmentType;
     }
     
     public LocalDateTime getAssessmentDate() {

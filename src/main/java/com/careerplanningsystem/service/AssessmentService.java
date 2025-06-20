@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -66,6 +67,8 @@ public class AssessmentService {
         assessment.setPersonalityType(personalityType);
         assessment.setRecommendedPath(recommendedPath);
         assessment.setScores(formatScores(categoryScores));
+        assessment.setAssessmentType("CAREER_ASSESSMENT");
+        assessment.setAssessmentDate(LocalDateTime.now());
         
         return assessmentRepository.save(assessment);
     }
@@ -118,17 +121,17 @@ public class AssessmentService {
                 .map(Map.Entry::getKey)
                 .orElse("综合发展");
         
-        // 根据分类映射到具体职业
+        // 根据分类映射到适合大学生的具体职业
         Map<String, String> careerMapping = Map.of(
-            "技术", "软件开发工程师",
-            "管理", "项目管理师",
+            "技术", "前端/后端开发工程师",
+            "管理", "产品运营/项目助理",
             "创意", "UI/UX设计师",
-            "分析", "数据分析师",
-            "沟通", "产品经理",
-            "研究", "算法工程师"
+            "分析", "数据分析师/商业分析师",
+            "沟通", "产品经理/市场专员",
+            "研究", "算法工程师/研发工程师"
         );
         
-        return careerMapping.getOrDefault(topCategory, "综合发展专家");
+        return careerMapping.getOrDefault(topCategory, "全栈发展专家");
     }
     
     /**
@@ -157,22 +160,21 @@ public class AssessmentService {
     private String generateRecommendedPath(String recommendedCareer, String personalityType) {
         StringBuilder path = new StringBuilder();
         
-        // 根据推荐职业生成学习路径
-        switch (recommendedCareer) {
-            case "软件开发工程师":
-                path.append("1. 学习编程基础 → 2. 掌握开发框架 → 3. 参与项目实践 → 4. 提升系统设计能力");
-                break;
-            case "数据分析师":
-                path.append("1. 学习统计基础 → 2. 掌握分析工具 → 3. 数据挖掘实践 → 4. 业务洞察能力");
-                break;
-            case "UI/UX设计师":
-                path.append("1. 设计理论学习 → 2. 工具技能掌握 → 3. 作品集建设 → 4. 用户体验优化");
-                break;
-            case "产品经理":
-                path.append("1. 产品思维培养 → 2. 市场分析能力 → 3. 项目管理技能 → 4. 沟通协调能力");
-                break;
-            default:
-                path.append("1. 基础技能学习 → 2. 专业能力提升 → 3. 实践经验积累 → 4. 综合素质发展");
+        // 根据推荐职业生成适合大学生的学习路径
+        if (recommendedCareer.contains("开发工程师")) {
+            path.append("1. 掌握编程语言基础(Java/Python/JavaScript) → 2. 学习开发框架(Spring Boot/React/Vue) → 3. 完成个人项目作品集 → 4. 参与开源项目或实习实践");
+        } else if (recommendedCareer.contains("数据分析师")) {
+            path.append("1. 学习统计学和数学基础 → 2. 掌握分析工具(Python/R/SQL/Excel) → 3. 学习机器学习基础 → 4. 完成数据分析项目案例");
+        } else if (recommendedCareer.contains("UI/UX设计师")) {
+            path.append("1. 学习设计基础理论和美学原理 → 2. 熟练使用设计工具(Figma/Sketch/Adobe) → 3. 建设个人设计作品集 → 4. 关注用户体验趋势和最佳实践");
+        } else if (recommendedCareer.contains("产品经理") || recommendedCareer.contains("产品运营")) {
+            path.append("1. 培养产品思维和商业敏感度 → 2. 学习用户研究和数据分析方法 → 3. 掌握项目管理和沟通技能 → 4. 参与产品实习或校园创业项目");
+        } else if (recommendedCareer.contains("算法工程师") || recommendedCareer.contains("研发工程师")) {
+            path.append("1. 深入学习数据结构和算法 → 2. 掌握机器学习和深度学习 → 3. 参与科研项目或竞赛 → 4. 关注前沿技术发展趋势");
+        } else if (recommendedCareer.contains("市场专员")) {
+            path.append("1. 学习市场营销基础理论 → 2. 掌握数字营销工具和方法 → 3. 参与市场调研和活动策划 → 4. 培养创意思维和沟通能力");
+        } else {
+            path.append("1. 明确个人兴趣和职业方向 → 2. 系统学习相关专业技能 → 3. 积极参与实习和项目实践 → 4. 建立个人品牌和职业网络");
         }
         
         return path.toString();

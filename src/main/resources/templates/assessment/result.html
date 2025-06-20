@@ -198,6 +198,22 @@
 
         .path-title {
             font-size: 1.5rem;
+        }
+
+        .path-description {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-top: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border-left: 4px solid #FFD700;
+        }
+
+        .path-title {
+            font-size: 1.5rem;
             color: white;
             margin-bottom: 1.5rem;
             display: flex;
@@ -500,7 +516,10 @@
             <!-- 学习路径 -->
             <div class="learning-path">
                 <h3 class="path-title">🎯 推荐学习路径</h3>
-                <div class="path-steps">
+                <div class="path-description" th:if="${assessment?.recommendedPath}" th:text="${assessment.recommendedPath}">
+                    根据您的测评结果，我们为您推荐以下学习路径...
+                </div>
+                <div class="path-steps" th:unless="${assessment?.recommendedPath}">
                     <div class="path-step">
                         <div class="step-number">1</div>
                         <div class="step-title">基础知识学习</div>
@@ -528,7 +547,10 @@
             <div class="recommended-courses">
                 <h3 class="courses-title">📚 推荐课程</h3>
                 <div class="courses-grid">
-                    <div class="course-card">
+                    <!-- 根据推荐职业显示不同课程 -->
+                    
+                    <!-- 开发工程师相关课程 -->
+                    <div th:if="${assessment?.recommendedCareer != null and assessment.recommendedCareer.contains('开发工程师')}" class="course-card">
                         <div class="course-title">Java编程基础</div>
                         <div class="course-description">从零开始学习Java编程语言，掌握面向对象编程思想</div>
                         <div class="course-meta">
@@ -537,7 +559,7 @@
                             <span>👥 1200人</span>
                         </div>
                     </div>
-                    <div class="course-card">
+                    <div th:if="${assessment?.recommendedCareer != null and assessment.recommendedCareer.contains('开发工程师')}" class="course-card">
                         <div class="course-title">Spring Boot实战</div>
                         <div class="course-description">学习Spring Boot框架，快速构建企业级应用</div>
                         <div class="course-meta">
@@ -546,13 +568,158 @@
                             <span>👥 800人</span>
                         </div>
                     </div>
-                    <div class="course-card">
-                        <div class="course-title">数据库设计</div>
-                        <div class="course-description">掌握MySQL数据库设计和优化技巧</div>
+                    <div th:if="${assessment?.recommendedCareer != null and assessment.recommendedCareer.contains('开发工程师')}" class="course-card">
+                        <div class="course-title">前端开发技术栈</div>
+                        <div class="course-description">学习HTML5、CSS3、JavaScript及现代前端框架</div>
                         <div class="course-meta">
                             <span>⭐ 4.7分</span>
-                            <span>⏱️ 25小时</span>
+                            <span>⏱️ 50小时</span>
+                            <span>👥 950人</span>
+                        </div>
+                    </div>
+
+                    <!-- 数据分析师相关课程 -->
+                    <div th:if="${assessment?.recommendedCareer != null and assessment.recommendedCareer.contains('数据分析师')}" class="course-card">
+                        <div class="course-title">Python数据分析</div>
+                        <div class="course-description">掌握Python数据分析核心库：Pandas、NumPy、Matplotlib</div>
+                        <div class="course-meta">
+                            <span>⭐ 4.8分</span>
+                            <span>⏱️ 45小时</span>
+                            <span>👥 1100人</span>
+                        </div>
+                    </div>
+                    <div th:if="${assessment?.recommendedCareer != null and assessment.recommendedCareer.contains('数据分析师')}" class="course-card">
+                        <div class="course-title">SQL数据查询</div>
+                        <div class="course-description">从基础到高级SQL查询，掌握数据处理技能</div>
+                        <div class="course-meta">
+                            <span>⭐ 4.6分</span>
+                            <span>⏱️ 30小时</span>
+                            <span>👥 800人</span>
+                        </div>
+                    </div>
+                    <div th:if="${assessment?.recommendedCareer != null and assessment.recommendedCareer.contains('数据分析师')}" class="course-card">
+                        <div class="course-title">统计学与机器学习</div>
+                        <div class="course-description">学习统计学基础和机器学习算法应用</div>
+                        <div class="course-meta">
+                            <span>⭐ 4.7分</span>
+                            <span>⏱️ 60小时</span>
                             <span>👥 650人</span>
+                        </div>
+                    </div>
+
+                    <!-- UI/UX设计师相关课程 -->
+                    <div th:if="${assessment?.recommendedCareer != null and assessment.recommendedCareer.contains('设计师')}" class="course-card">
+                        <div class="course-title">UI设计基础</div>
+                        <div class="course-description">学习界面设计原理、色彩搭配和视觉层次</div>
+                        <div class="course-meta">
+                            <span>⭐ 4.9分</span>
+                            <span>⏱️ 35小时</span>
+                            <span>👥 750人</span>
+                        </div>
+                    </div>
+                    <div th:if="${assessment?.recommendedCareer != null and assessment.recommendedCareer.contains('设计师')}" class="course-card">
+                        <div class="course-title">Figma设计工具</div>
+                        <div class="course-description">掌握Figma设计工具，从原型到高保真设计</div>
+                        <div class="course-meta">
+                            <span>⭐ 4.8分</span>
+                            <span>⏱️ 25小时</span>
+                            <span>👥 900人</span>
+                        </div>
+                    </div>
+                    <div th:if="${assessment?.recommendedCareer != null and assessment.recommendedCareer.contains('设计师')}" class="course-card">
+                        <div class="course-title">用户体验设计</div>
+                        <div class="course-description">学习用户研究方法和交互设计原则</div>
+                        <div class="course-meta">
+                            <span>⭐ 4.7分</span>
+                            <span>⏱️ 40小时</span>
+                            <span>👥 600人</span>
+                        </div>
+                    </div>
+
+                    <!-- 产品经理相关课程 -->
+                    <div th:if="${assessment?.recommendedCareer != null and (assessment.recommendedCareer.contains('产品经理') or assessment.recommendedCareer.contains('产品运营'))}" class="course-card">
+                        <div class="course-title">产品经理入门</div>
+                        <div class="course-description">学习产品思维、需求分析和产品规划方法</div>
+                        <div class="course-meta">
+                            <span>⭐ 4.8分</span>
+                            <span>⏱️ 40小时</span>
+                            <span>👥 850人</span>
+                        </div>
+                    </div>
+                    <div th:if="${assessment?.recommendedCareer != null and (assessment.recommendedCareer.contains('产品经理') or assessment.recommendedCareer.contains('产品运营'))}" class="course-card">
+                        <div class="course-title">用户调研与数据分析</div>
+                        <div class="course-description">掌握用户研究方法和数据驱动的产品决策</div>
+                        <div class="course-meta">
+                            <span>⭐ 4.7分</span>
+                            <span>⏱️ 35小时</span>
+                            <span>👥 700人</span>
+                        </div>
+                    </div>
+                    <div th:if="${assessment?.recommendedCareer != null and (assessment.recommendedCareer.contains('产品经理') or assessment.recommendedCareer.contains('产品运营'))}" class="course-card">
+                        <div class="course-title">项目管理实践</div>
+                        <div class="course-description">学习敏捷开发和项目管理工具使用</div>
+                        <div class="course-meta">
+                            <span>⭐ 4.6分</span>
+                            <span>⏱️ 30小时</span>
+                            <span>👥 650人</span>
+                        </div>
+                    </div>
+
+                    <!-- 算法/研发工程师相关课程 -->
+                    <div th:if="${assessment?.recommendedCareer != null and (assessment.recommendedCareer.contains('算法工程师') or assessment.recommendedCareer.contains('研发工程师'))}" class="course-card">
+                        <div class="course-title">数据结构与算法</div>
+                        <div class="course-description">深入学习常用数据结构和算法设计思想</div>
+                        <div class="course-meta">
+                            <span>⭐ 4.9分</span>
+                            <span>⏱️ 60小时</span>
+                            <span>👥 1200人</span>
+                        </div>
+                    </div>
+                    <div th:if="${assessment?.recommendedCareer != null and (assessment.recommendedCareer.contains('算法工程师') or assessment.recommendedCareer.contains('研发工程师'))}" class="course-card">
+                        <div class="course-title">机器学习基础</div>
+                        <div class="course-description">学习监督学习、无监督学习等机器学习算法</div>
+                        <div class="course-meta">
+                            <span>⭐ 4.8分</span>
+                            <span>⏱️ 70小时</span>
+                            <span>👥 900人</span>
+                        </div>
+                    </div>
+                    <div th:if="${assessment?.recommendedCareer != null and (assessment.recommendedCareer.contains('算法工程师') or assessment.recommendedCareer.contains('研发工程师'))}" class="course-card">
+                        <div class="course-title">深度学习实战</div>
+                        <div class="course-description">掌握TensorFlow/PyTorch框架和神经网络应用</div>
+                        <div class="course-meta">
+                            <span>⭐ 4.7分</span>
+                            <span>⏱️ 80小时</span>
+                            <span>👥 750人</span>
+                        </div>
+                    </div>
+
+                    <!-- 默认课程（通用） -->
+                    <div th:unless="${assessment?.recommendedCareer != null}" class="course-card">
+                        <div class="course-title">编程思维入门</div>
+                        <div class="course-description">培养编程思维，学习问题分解和逻辑思考</div>
+                        <div class="course-meta">
+                            <span>⭐ 4.8分</span>
+                            <span>⏱️ 30小时</span>
+                            <span>👥 1500人</span>
+                        </div>
+                    </div>
+                    <div th:unless="${assessment?.recommendedCareer != null}" class="course-card">
+                        <div class="course-title">职场沟通技巧</div>
+                        <div class="course-description">提升职场沟通能力和团队协作技能</div>
+                        <div class="course-meta">
+                            <span>⭐ 4.6分</span>
+                            <span>⏱️ 20小时</span>
+                            <span>👥 800人</span>
+                        </div>
+                    </div>
+                    <div th:unless="${assessment?.recommendedCareer != null}" class="course-card">
+                        <div class="course-title">个人职业规划</div>
+                        <div class="course-description">学习职业规划方法，明确发展方向</div>
+                        <div class="course-meta">
+                            <span>⭐ 4.7分</span>
+                            <span>⏱️ 15小时</span>
+                            <span>👥 600人</span>
                         </div>
                     </div>
                 </div>
@@ -561,28 +728,180 @@
             <!-- 行动建议 -->
             <div class="action-suggestions">
                 <h3 class="suggestions-title">💡 行动建议</h3>
-                <div class="suggestion-item">
+                
+                <!-- 开发工程师建议 -->
+                <div th:if="${assessment?.recommendedCareer != null and assessment.recommendedCareer.contains('开发工程师')}" class="suggestion-item">
+                    <div class="suggestion-icon">1</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">掌握核心技术栈</div>
+                        <div class="suggestion-detail">重点学习Java/Python编程语言，熟练掌握开发框架如Spring Boot、React等</div>
+                    </div>
+                </div>
+                <div th:if="${assessment?.recommendedCareer != null and assessment.recommendedCareer.contains('开发工程师')}" class="suggestion-item">
+                    <div class="suggestion-icon">2</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">构建项目作品集</div>
+                        <div class="suggestion-detail">完成2-3个完整的项目，展示前端、后端和数据库的综合开发能力</div>
+                    </div>
+                </div>
+                <div th:if="${assessment?.recommendedCareer != null and assessment.recommendedCareer.contains('开发工程师')}" class="suggestion-item">
+                    <div class="suggestion-icon">3</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">参与开源项目</div>
+                        <div class="suggestion-detail">在GitHub上贡献开源项目，积累代码经验并建立技术影响力</div>
+                    </div>
+                </div>
+                <div th:if="${assessment?.recommendedCareer != null and assessment.recommendedCareer.contains('开发工程师')}" class="suggestion-item">
+                    <div class="suggestion-icon">4</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">寻求实习机会</div>
+                        <div class="suggestion-detail">积极申请相关实习岗位，在实际工作中提升开发技能和团队协作能力</div>
+                    </div>
+                </div>
+
+                <!-- 数据分析师建议 -->
+                <div th:if="${assessment?.recommendedCareer != null and assessment.recommendedCareer.contains('数据分析师')}" class="suggestion-item">
+                    <div class="suggestion-icon">1</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">强化数学统计基础</div>
+                        <div class="suggestion-detail">深入学习统计学、概率论和线性代数，为数据分析建立坚实理论基础</div>
+                    </div>
+                </div>
+                <div th:if="${assessment?.recommendedCareer != null and assessment.recommendedCareer.contains('数据分析师')}" class="suggestion-item">
+                    <div class="suggestion-icon">2</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">掌握分析工具</div>
+                        <div class="suggestion-detail">熟练使用Python/R、SQL、Excel等工具，学会数据清洗和可视化技能</div>
+                    </div>
+                </div>
+                <div th:if="${assessment?.recommendedCareer != null and assessment.recommendedCareer.contains('数据分析师')}" class="suggestion-item">
+                    <div class="suggestion-icon">3</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">完成分析项目</div>
+                        <div class="suggestion-detail">选择感兴趣的数据集，完成端到端的分析项目，形成分析报告</div>
+                    </div>
+                </div>
+                <div th:if="${assessment?.recommendedCareer != null and assessment.recommendedCareer.contains('数据分析师')}" class="suggestion-item">
+                    <div class="suggestion-icon">4</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">关注行业应用</div>
+                        <div class="suggestion-detail">了解不同行业的数据分析需求，培养业务理解能力</div>
+                    </div>
+                </div>
+
+                <!-- UI/UX设计师建议 -->
+                <div th:if="${assessment?.recommendedCareer != null and assessment.recommendedCareer.contains('设计师')}" class="suggestion-item">
+                    <div class="suggestion-icon">1</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">培养设计审美</div>
+                        <div class="suggestion-detail">多观察优秀设计作品，学习色彩搭配、排版布局等设计原理</div>
+                    </div>
+                </div>
+                <div th:if="${assessment?.recommendedCareer != null and assessment.recommendedCareer.contains('设计师')}" class="suggestion-item">
+                    <div class="suggestion-icon">2</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">精通设计工具</div>
+                        <div class="suggestion-detail">熟练掌握Figma、Sketch、Adobe Creative Suite等主流设计工具</div>
+                    </div>
+                </div>
+                <div th:if="${assessment?.recommendedCareer != null and assessment.recommendedCareer.contains('设计师')}" class="suggestion-item">
+                    <div class="suggestion-icon">3</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">建立作品集</div>
+                        <div class="suggestion-detail">设计并整理个人作品集，展示不同类型的设计项目和设计思路</div>
+                    </div>
+                </div>
+                <div th:if="${assessment?.recommendedCareer != null and assessment.recommendedCareer.contains('设计师')}" class="suggestion-item">
+                    <div class="suggestion-icon">4</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">了解用户需求</div>
+                        <div class="suggestion-detail">学习用户研究方法，能够从用户角度思考设计问题</div>
+                    </div>
+                </div>
+
+                <!-- 产品经理建议 -->
+                <div th:if="${assessment?.recommendedCareer != null and (assessment.recommendedCareer.contains('产品经理') or assessment.recommendedCareer.contains('产品运营'))}" class="suggestion-item">
+                    <div class="suggestion-icon">1</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">培养产品思维</div>
+                        <div class="suggestion-detail">学习产品规划方法，理解用户需求和商业模式之间的平衡</div>
+                    </div>
+                </div>
+                <div th:if="${assessment?.recommendedCareer != null and (assessment.recommendedCareer.contains('产品经理') or assessment.recommendedCareer.contains('产品运营'))}" class="suggestion-item">
+                    <div class="suggestion-icon">2</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">提升沟通协调能力</div>
+                        <div class="suggestion-detail">参与团队项目，练习需求管理和跨部门协作技能</div>
+                    </div>
+                </div>
+                <div th:if="${assessment?.recommendedCareer != null and (assessment.recommendedCareer.contains('产品经理') or assessment.recommendedCareer.contains('产品运营'))}" class="suggestion-item">
+                    <div class="suggestion-icon">3</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">掌握数据分析</div>
+                        <div class="suggestion-detail">学习用户行为分析、A/B测试等数据驱动的产品决策方法</div>
+                    </div>
+                </div>
+                <div th:if="${assessment?.recommendedCareer != null and (assessment.recommendedCareer.contains('产品经理') or assessment.recommendedCareer.contains('产品运营'))}" class="suggestion-item">
+                    <div class="suggestion-icon">4</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">关注市场趋势</div>
+                        <div class="suggestion-detail">密切关注行业动态和竞品分析，培养敏锐的市场洞察力</div>
+                    </div>
+                </div>
+
+                <!-- 算法/研发工程师建议 -->
+                <div th:if="${assessment?.recommendedCareer != null and (assessment.recommendedCareer.contains('算法工程师') or assessment.recommendedCareer.contains('研发工程师'))}" class="suggestion-item">
+                    <div class="suggestion-icon">1</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">强化算法基础</div>
+                        <div class="suggestion-detail">深入学习数据结构和算法，多在LeetCode等平台练习编程题</div>
+                    </div>
+                </div>
+                <div th:if="${assessment?.recommendedCareer != null and (assessment.recommendedCareer.contains('算法工程师') or assessment.recommendedCareer.contains('研发工程师'))}" class="suggestion-item">
+                    <div class="suggestion-icon">2</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">学习机器学习</div>
+                        <div class="suggestion-detail">掌握监督学习、无监督学习等机器学习算法的原理和应用</div>
+                    </div>
+                </div>
+                <div th:if="${assessment?.recommendedCareer != null and (assessment.recommendedCareer.contains('算法工程师') or assessment.recommendedCareer.contains('研发工程师'))}" class="suggestion-item">
+                    <div class="suggestion-icon">3</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">参与科研项目</div>
+                        <div class="suggestion-detail">加入导师的科研项目或参加算法竞赛，积累实战经验</div>
+                    </div>
+                </div>
+                <div th:if="${assessment?.recommendedCareer != null and (assessment.recommendedCareer.contains('算法工程师') or assessment.recommendedCareer.contains('研发工程师'))}" class="suggestion-item">
+                    <div class="suggestion-icon">4</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">跟踪前沿技术</div>
+                        <div class="suggestion-detail">关注顶级会议和期刊，了解人工智能领域的最新发展</div>
+                    </div>
+                </div>
+
+                <!-- 默认建议 -->
+                <div th:unless="${assessment?.recommendedCareer != null}" class="suggestion-item">
                     <div class="suggestion-icon">1</div>
                     <div class="suggestion-content">
                         <div class="suggestion-text">制定学习计划</div>
                         <div class="suggestion-detail">根据推荐路径，制定3-6个月的详细学习计划，设定阶段性目标</div>
                     </div>
                 </div>
-                <div class="suggestion-item">
+                <div th:unless="${assessment?.recommendedCareer != null}" class="suggestion-item">
                     <div class="suggestion-icon">2</div>
                     <div class="suggestion-content">
                         <div class="suggestion-text">参与实践项目</div>
                         <div class="suggestion-detail">在学习过程中，尝试完成小项目，将理论知识转化为实践经验</div>
                     </div>
                 </div>
-                <div class="suggestion-item">
+                <div th:unless="${assessment?.recommendedCareer != null}" class="suggestion-item">
                     <div class="suggestion-icon">3</div>
                     <div class="suggestion-content">
                         <div class="suggestion-text">建立学习社群</div>
                         <div class="suggestion-detail">加入相关技术社群，与同行交流学习心得，获取最新技术动态</div>
                     </div>
                 </div>
-                <div class="suggestion-item">
+                <div th:unless="${assessment?.recommendedCareer != null}" class="suggestion-item">
                     <div class="suggestion-icon">4</div>
                     <div class="suggestion-content">
                         <div class="suggestion-text">定期复习评估</div>
@@ -615,10 +934,11 @@
         // 默认数据
         const defaultAbilities = {
             '技术': abilities['技术'] || 18,
-            '创意': abilities['创意'] || 12,
-            '分析': abilities['分析'] || 16,
+            '管理': abilities['管理'] || 12,
+            '创意': abilities['创意'] || 16,
+            '分析': abilities['分析'] || 14,
             '沟通': abilities['沟通'] || 10,
-            '管理': abilities['管理'] || 8
+            '研究': abilities['研究'] || 13
         };
 
         // 雷达图
@@ -684,14 +1004,16 @@
                         'rgba(54, 162, 235, 0.8)',
                         'rgba(255, 205, 86, 0.8)',
                         'rgba(75, 192, 192, 0.8)',
-                        'rgba(153, 102, 255, 0.8)'
+                        'rgba(153, 102, 255, 0.8)',
+                        'rgba(255, 159, 64, 0.8)'
                     ],
                     borderColor: [
                         'rgba(255, 99, 132, 1)',
                         'rgba(54, 162, 235, 1)',
                         'rgba(255, 205, 86, 1)',
                         'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)'
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
                     ],
                     borderWidth: 1
                 }]

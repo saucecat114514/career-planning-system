@@ -209,16 +209,17 @@
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
             </div>
-            <div id="progressText">问题 1 / <span th:text="${#lists.size(questions)}">25</span></div>
+            <div id="progressText">问题 1 / <span th:text="${#lists.size(questions)}">36</span></div>
         </div>
 
         <form id="assessmentForm" action="/assessment/submit" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <div th:each="question, iterStat : ${questions}" 
                  th:class="'question-card' + (${iterStat.first} ? ' active' : '')"
                  th:data-question-index="${iterStat.index}">
                 
                 <div class="question-number">
-                    问题 <span th:text="${iterStat.index + 1}">1</span> / <span th:text="${#lists.size(questions)}">25</span>
+                    问题 <span th:text="${iterStat.index + 1}">1</span> / <span th:text="${#lists.size(questions)}">36</span>
                 </div>
                 
                 <div class="question-text" th:text="${question.questionText}">
@@ -270,7 +271,7 @@
 
     <script>
         let currentQuestion = 0;
-        const totalQuestions = /*[[${#lists.size(questions)}]]*/ 25;
+        const totalQuestions = /*[[${#lists.size(questions)}]]*/ 36;
         const answers = {};
 
         function selectOption(element, questionId, value) {
