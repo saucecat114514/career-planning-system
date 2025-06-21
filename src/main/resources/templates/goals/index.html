@@ -381,8 +381,10 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 10px;
             background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
             color: white;
             font-size: 1rem;
+            transition: all 0.3s ease;
         }
 
         .form-control::placeholder {
@@ -393,6 +395,11 @@
             outline: none;
             border-color: rgba(255, 255, 255, 0.5);
             background: rgba(255, 255, 255, 0.15);
+        }
+
+        .form-control option {
+            background: #2a5298;
+            color: white;
         }
 
         .btn-primary {

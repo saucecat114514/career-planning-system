@@ -169,6 +169,9 @@
             padding: 2rem;
             transition: all 0.3s ease;
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            min-height: 420px;
         }
 
         .assessment-card:hover {
@@ -177,10 +180,46 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
         }
 
+        .assessment-card:hover .card-icon.assessment-start {
+            color: #6366F1;
+            transform: scale(1.1);
+        }
+
+        .assessment-card:hover .card-icon.assessment-history {
+            color: #8B5CF6;
+            transform: scale(1.1);
+        }
+
+        .assessment-card:hover .card-icon.assessment-report {
+            color: #FBBF24;
+            transform: scale(1.1);
+        }
+
         .card-icon {
             font-size: 3rem;
             margin-bottom: 1rem;
             display: block;
+            transition: all 0.3s ease;
+        }
+
+        .card-icon.assessment-start {
+            color: #4F46E5;
+        }
+
+        .card-icon.assessment-history {
+            color: #7C3AED;
+        }
+
+        .card-icon.assessment-report {
+            color: #EAB308;
+        }
+
+        .history-icon {
+            color: #F59E0B;
+        }
+
+        .info-icon {
+            color: #EF4444;
         }
 
         .card-title {
@@ -194,23 +233,27 @@
             color: rgba(255, 255, 255, 0.8);
             line-height: 1.6;
             margin-bottom: 1.5rem;
+            flex-grow: 1;
         }
 
         .card-action {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             color: white;
-            border: none;
             padding: 0.8rem 2rem;
             border-radius: 25px;
             cursor: pointer;
             font-weight: bold;
             transition: all 0.3s ease;
             width: 100%;
+            margin-top: auto;
         }
 
         .card-action:hover {
+            background: rgba(255, 255, 255, 0.3);
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.2);
         }
 
         /* 历史记录区域 */
@@ -339,7 +382,7 @@
             <section class="assessment-section">
                 <!-- 新测评卡片 -->
                 <div class="assessment-card" onclick="startAssessment()">
-                    <span class="card-icon">🚀</span>
+                    <i class="fas fa-rocket card-icon assessment-start"></i>
                     <h3 class="card-title">开始职业测评</h3>
                     <p class="card-description">
                                                         全面的职业能力和兴趣测评，包含36个精心设计的问题，
@@ -350,7 +393,7 @@
 
                 <!-- 测评历史卡片 -->
                 <div class="assessment-card" onclick="viewHistory()">
-                    <span class="card-icon">📊</span>
+                    <i class="fas fa-chart-line card-icon assessment-history"></i>
                     <h3 class="card-title">测评历史</h3>
                     <p class="card-description">
                         查看您的历史测评记录，对比不同时期的测评结果，
@@ -361,7 +404,7 @@
 
                 <!-- 测评报告卡片 -->
                 <div class="assessment-card" th:if="${latestAssessment != null}" onclick="viewLatestResult()">
-                    <span class="card-icon">📋</span>
+                    <i class="fas fa-file-alt card-icon assessment-report"></i>
                     <h3 class="card-title">最新测评报告</h3>
                     <p class="card-description">
                         <strong th:text="${latestAssessment.recommendedCareer}">推荐职业</strong><br>
@@ -375,7 +418,7 @@
             <!-- 测评历史记录 -->
             <section class="history-section" th:if="${hasAssessment}">
                 <h3 class="history-title">
-                    <span>📈</span> 最近测评记录
+                    <i class="fas fa-chart-bar history-icon"></i> 最近测评记录
                 </h3>
                 <div class="history-item" th:if="${latestAssessment != null}">
                     <div class="history-info">
@@ -389,7 +432,7 @@
             <!-- 测评说明 -->
             <section class="history-section">
                 <h3 class="history-title">
-                    <span>💡</span> 测评说明
+                    <i class="fas fa-lightbulb info-icon"></i> 测评说明
                 </h3>
                 <div style="color: rgba(255, 255, 255, 0.8); line-height: 1.6;">
                                                     <p>• 测评包含36个问题，预计用时15-20分钟</p>

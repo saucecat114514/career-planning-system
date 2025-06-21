@@ -236,6 +236,10 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
         }
 
         .feature-card::before {
@@ -254,6 +258,22 @@
             transform: translateY(-10px);
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
             border-color: rgba(255, 255, 255, 0.4);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+            color: #7C3AED;
+        }
+
+        .feature-card:hover .feature-title {
+            color: #ffffff;
+        }
+
+        .feature-card:hover .feature-action {
+            background: rgba(79, 70, 229, 0.4);
+            transform: translateY(-2px);
         }
 
         .feature-icon {
@@ -261,6 +281,7 @@
             color: #4F46E5;
             margin-bottom: 1.5rem;
             text-shadow: 0 4px 15px rgba(79, 70, 229, 0.2);
+            transition: all 0.3s ease;
         }
 
         .feature-title {
@@ -268,12 +289,28 @@
             font-weight: 700;
             color: white;
             margin-bottom: 1rem;
+            transition: all 0.3s ease;
         }
 
         .feature-description {
             color: rgba(255, 255, 255, 0.8);
             line-height: 1.6;
             font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(79, 70, 229, 0.2);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(79, 70, 229, 0.3);
         }
 
         /* 响应式设计 */
@@ -370,29 +407,41 @@
 
         <!-- 功能卡片 -->
         <div class="features">
-            <div class="feature-card fade-in">
+            <a href="/assessment" class="feature-card fade-in">
                 <div class="feature-icon">
                     <i class="fas fa-route"></i>
                 </div>
                 <h3 class="feature-title">职业测评</h3>
-                <p class="feature-description">测评·分析·职业推荐</p>
-            </div>
+                <p class="feature-description">通过科学测评了解自己的职业倾向，获得个性化的职业建议</p>
+                <div class="feature-action">
+                    <i class="fas fa-play"></i>
+                    开始测评
+                </div>
+            </a>
 
-            <div class="feature-card fade-in-delay">
+            <a href="/courses" class="feature-card fade-in-delay">
                 <div class="feature-icon">
                     <i class="fas fa-chart-line"></i>
                 </div>
                 <h3 class="feature-title">技能提升</h3>
-                <p class="feature-description">课程推荐·实训项目</p>
-            </div>
-
-            <div class="feature-card fade-in-delay-2">
-                <div class="feature-icon">
-                    <i class="fas fa-analytics"></i>
+                <p class="feature-description">根据职业规划选择适合的课程，系统化提升专业技能</p>
+                <div class="feature-action">
+                    <i class="fas fa-book"></i>
+                    浏览课程
                 </div>
-                <h3 class="feature-title">数据洞察</h3>
-                <p class="feature-description">行业热度·新兴趋势</p>
-            </div>
+            </a>
+
+            <a href="/industry" class="feature-card fade-in-delay-2">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h3 class="feature-title">行业洞察</h3>
+                <p class="feature-description">了解行业发展趋势，掌握市场需求和就业前景</p>
+                <div class="feature-action">
+                    <i class="fas fa-search"></i>
+                    查看洞察
+                </div>
+            </a>
         </div>
     </main>
 

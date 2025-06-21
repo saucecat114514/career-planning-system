@@ -238,6 +238,9 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 480px;
         }
 
         .course-card:hover {
@@ -274,6 +277,7 @@
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            flex-grow: 1;
         }
 
         .course-meta {
@@ -314,6 +318,7 @@
         .course-actions {
             display: flex;
             gap: 1rem;
+            margin-top: auto;
         }
 
         .btn-continue {
@@ -681,14 +686,14 @@
 
         function getCategoryColor(category) {
             const colors = {
-                programming: 'linear-gradient(45deg, #667eea, #764ba2)',
-                design: 'linear-gradient(45deg, #f093fb, #f5576c)',
-                marketing: 'linear-gradient(45deg, #4facfe, #00f2fe)',
-                management: 'linear-gradient(45deg, #43e97b, #38f9d7)',
-                finance: 'linear-gradient(45deg, #fa709a, #fee140)',
-                data: 'linear-gradient(45deg, #a8edea, #fed6e3)'
+                programming: 'rgba(255, 165, 0, 0.3)',
+                design: 'rgba(240, 147, 251, 0.3)',
+                marketing: 'rgba(79, 172, 254, 0.3)',
+                management: 'rgba(67, 233, 123, 0.3)',
+                finance: 'rgba(250, 112, 154, 0.3)',
+                data: 'rgba(168, 237, 234, 0.3)'
             };
-            return colors[category] || 'linear-gradient(45deg, #ff6b6b, #ee5a24)';
+            return colors[category] || 'rgba(255, 107, 107, 0.3)';
         }
 
         function getDifficultyColor(difficulty) {
