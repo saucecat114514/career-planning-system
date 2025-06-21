@@ -198,9 +198,9 @@
         /* 功能卡片 */
         .features {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-            max-width: 1200px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 0 2rem;
         }
@@ -424,6 +424,10 @@
             animation: fadeInUp 0.8s ease-out 0.4s both;
         }
 
+        .fade-in-delay-3 {
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -527,7 +531,19 @@
                 </div>
             </a>
 
-            <a href="/industry" class="feature-card fade-in-delay-2">
+            <a href="/goals" class="feature-card fade-in-delay-2">
+                <div class="feature-icon">
+                    <i class="fas fa-bullseye"></i>
+                </div>
+                <h3 class="feature-title">目标管理</h3>
+                <p class="feature-description">设定职业目标并制定行动计划，追踪进度实现个人成长</p>
+                <div class="feature-action">
+                    <i class="fas fa-plus"></i>
+                    设定目标
+                </div>
+            </a>
+
+            <a href="/industry" class="feature-card fade-in-delay-3">
                 <div class="feature-icon">
                     <i class="fas fa-chart-bar"></i>
                 </div>
