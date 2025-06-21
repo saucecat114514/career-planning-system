@@ -198,9 +198,9 @@
         /* 功能卡片 */
         .features {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            max-width: 1400px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 0 2rem;
         }
@@ -333,6 +333,13 @@
         }
 
         /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .features {
+                max-width: 900px;
+                gap: 1.5rem;
+            }
+        }
+
         @media (max-width: 768px) {
             .page-title {
                 font-size: 2rem;
